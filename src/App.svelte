@@ -19,16 +19,22 @@
 </script>
 
 <main>
-  <h1>{title}</h1>
+  <header class="max-w-7xl mx-auto px-8 py-4">
+    <h1 class="text-4xl">{title}</h1>
+  </header>
 
-  <NoteForm noteAdded={handleAddNewNote} />
+  <section
+    class="grid gap-8 grid-cols-1 md:grid-cols-6 items-start max-w-7xl mx-auto px-8"
+  >
+    <NoteForm noteAdded={handleAddNewNote} />
 
-  <ul>
-    {#each notes as note}
-      {#if notes.length === 0}
-        <li>No notes to display right now. 😴</li>
-      {/if}
-      <NoteItem {note} />
-    {/each}
-  </ul>
+    <ul class="flex flex-col gap-4 md:col-span-3 lg:col-span-4">
+      {#each notes as note}
+        {#if notes.length === 0}
+          <li>No notes to display right now. 😴</li>
+        {/if}
+        <NoteItem {note} />
+      {/each}
+    </ul>
+  </section>
 </main>

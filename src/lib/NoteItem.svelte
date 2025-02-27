@@ -8,7 +8,9 @@
   const { note }: Props = $props()
 </script>
 
-<li>
+<li
+  class="bg-white outline outline-gray-200 hover:bg-gray-200 flex flex-col gap-4 p-4 rounded-lg"
+>
   <h2>{note.title}</h2>
   <p>{note.content}</p>
 
