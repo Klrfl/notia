@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { Note, InsertableNote } from "./types/"
+  import NoteItem from "./lib/NoteItem.svelte"
+
   let title = "Notia"
 
   const notes = $state<Note[]>([
@@ -59,23 +61,7 @@
 
   <ul>
     {#each notes as note}
-      <li>
-        <h2>{note.title}</h2>
-        <p>{note.content}</p>
-
-        <p>
-          Created at {Intl.DateTimeFormat("en-US", {
-            dateStyle: "long",
-            timeStyle: "medium",
-          }).format(note.createdAt)}
-        </p>
-        <p>
-          Last updated at {Intl.DateTimeFormat("en-US", {
-            dateStyle: "long",
-            timeStyle: "medium",
-          }).format(note.updatedAt)}
-        </p>
-      </li>
+      <NoteItem {note} />
     {/each}
   </ul>
 </main>
