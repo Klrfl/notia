@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Note, InsertableNote } from "./types/"
   import NoteItem from "./lib/NoteItem.svelte"
+  import NoteForm from "./lib/NoteForm.svelte"
 
   let title = "Notia"
 
@@ -21,12 +22,6 @@
     },
   ])
 
-  const newNote = $state<InsertableNote>({
-    id: Math.round(Math.random() * 10),
-    title: "",
-    content: "",
-  })
-
   const handleAddNewNote = (note: InsertableNote) => {
     notes.push({ ...note, createdAt: new Date(), updatedAt: new Date() })
   }
@@ -35,29 +30,7 @@
 <main>
   <h1>{title}</h1>
 
-  <form
-    onsubmit={(e) => {
-      e.preventDefault()
-      handleAddNewNote(newNote)
-    }}
-  >
-    <label for="title">title</label>
-    <input
-      type="text"
-      placeholder="title"
-      required
-      bind:value={newNote.title}
-    />
-    <label for="content">content</label>
-    <input
-      type="text"
-      placeholder="your note's contents"
-      required
-      bind:value={newNote.content}
-    />
-
-    <button type="submit">Add new note</button>
-  </form>
+  <NoteForm noteAdded={handleAddNewNote} />
 
   <ul>
     {#each notes as note}
@@ -65,14 +38,3 @@
     {/each}
   </ul>
 </main>
-
-<style>
-  form {
-    outline: 2px solid #efefef;
-  }
-
-  form :is(input, label, button) {
-    display: block;
-    padding: 1rem 1.5rem;
-  }
-</style>
