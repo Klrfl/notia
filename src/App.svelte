@@ -1,15 +1,6 @@
 <script lang="ts">
+  import type { Note, InsertableNote } from "./types/"
   let title = "Notia"
-
-  interface Note {
-    id: number
-    title: string
-    content: string
-    createdAt: Date
-    updatedAt: Date
-  }
-
-  type InsertableNote = Omit<Note, "createdAt" | "updatedAt">
 
   const notes = $state<Note[]>([
     {
