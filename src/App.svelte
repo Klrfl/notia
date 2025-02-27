@@ -5,25 +5,16 @@
 
   let title = "Notia"
 
-  const notes = $state<Note[]>([
-    {
-      id: 1,
-      title: "a note",
-      content: "i would like to learn svelte.. like right now",
-      updatedAt: new Date(),
-      createdAt: new Date(),
-    },
-    {
-      id: 2,
-      title: "another note",
-      content: "finish this markdown notetaking app",
-      updatedAt: new Date(),
-      createdAt: new Date(),
-    },
-  ])
+  const NOTES_LOCALSTORAGE_KEY = "notia-notes"
+  const parsedNotes = JSON.parse(
+    localStorage.getItem(NOTES_LOCALSTORAGE_KEY) ?? "[]"
+  )
+  const notes = $state<Note[]>(parsedNotes)
 
   const handleAddNewNote = (note: InsertableNote) => {
     notes.push({ ...note, createdAt: new Date(), updatedAt: new Date() })
+
+    localStorage.setItem(NOTES_LOCALSTORAGE_KEY, JSON.stringify(notes))
   }
 </script>
 
@@ -34,6 +25,9 @@
 
   <ul>
     {#each notes as note}
+      {#if notes.length === 0}
+        <li>No notes to display right now. 😴</li>
+      {/if}
       <NoteItem {note} />
     {/each}
   </ul>

@@ -16,12 +16,12 @@
     Created at {Intl.DateTimeFormat("en-US", {
       dateStyle: "long",
       timeStyle: "medium",
-    }).format(note.createdAt)}
+    }).format(new Date(note.createdAt))}
   </p>
   <p>
     Last updated at {Intl.DateTimeFormat("en-US", {
       dateStyle: "long",
       timeStyle: "medium",
-    }).format(note.updatedAt)}
+    }).format(new Date(note.updatedAt))}
   </p>
 </li>
