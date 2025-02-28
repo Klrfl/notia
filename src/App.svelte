@@ -103,18 +103,29 @@
     notes = notes.filter((note) => note.id !== noteId)
   }
 
+  $effect(() => {
+    localStorage.setItem(NOTES_LOCALSTORAGE_KEY, JSON.stringify(notes))
+  })
+
   let dialog = $state<HTMLDialogElement>()
 
-  $effect(() => console.log(dialog))
+  let editedNote = $state<Note>()
 
-  const editNote = () => {
+  const initiateEditNote = (note: Note) => {
     if (!dialog) return
+    editedNote = note
+
     dialog.showModal()
   }
 
   const closeEditNote = () => {
     if (!dialog) return
     dialog.close()
+  }
+
+  const handleEditNote = (note: Note) => {
+    const noteLocation = notes.indexOf(note)
+    const result = notes.splice(noteLocation, 1, note)
   }
 </script>
 
@@ -148,8 +159,6 @@
         />
       {/each}
     </ul>
-
-    <Button onclick={editNote} class="bg-white">Edit note</Button>
   </section>
 
   <Dialog bind:isOpen={isEditingNote} heading="Edit note">
