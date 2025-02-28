@@ -1,5 +1,9 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", sans-serif;
+}
 
 body {
-  @apply bg-gray-100
+  @apply font-sans bg-gray-100;
 }
