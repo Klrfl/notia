@@ -125,7 +125,11 @@
 
   const handleEditNote = (note: Note) => {
     const noteLocation = notes.indexOf(note)
-    const result = notes.splice(noteLocation, 1, note)
+    notes.splice(noteLocation, 1, note)
+  }
+
+  const handleDeleteNote = (noteId: Note["id"]) => {
+    notes = notes.filter((note) => note.id !== noteId)
   }
 </script>
 
