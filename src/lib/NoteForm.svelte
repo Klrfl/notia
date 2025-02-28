@@ -1,5 +1,6 @@
 <script lang="ts">
   import Plus from "lucide-svelte/icons/plus"
+  import Button from "./ui/Button.svelte"
   import type { InsertableNote } from "../types/"
 
   const { noteAdded } = $props()
@@ -40,11 +41,8 @@
     bind:value={newNote.content}
   />
 
-  <button
-    type="submit"
-    class="px-6 py-4 cursor-pointer bg-blue-400 hover:bg-blue-500 text-white flex gap-4 justify-center"
-  >
+  <Button class="bg-blue-400 hover:bg-blue-500 text-white">
     <Plus />
     Add new note
-  </button>
+  </Button>
 </form>
