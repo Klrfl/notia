@@ -1,11 +1,13 @@
 <script lang="ts">
   import type { Note } from "../types/"
+  import Button from "./ui/Button.svelte"
 
   interface Props {
     note: Note
+    editNote: (note: Note) => void
   }
 
-  const { note }: Props = $props()
+  const { note, editNote }: Props = $props()
 </script>
 
 <li
@@ -26,4 +28,9 @@
       timeStyle: "medium",
     }).format(new Date(note.updatedAt))}
   </p>
+
+  <Button
+    class="bg-blue-400 hover:bg-blue-500 text-white"
+    onclick={() => editNote(note)}>Edit note</Button
+  >
 </li>

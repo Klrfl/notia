@@ -15,22 +15,31 @@
 
   const handleAddNewNote = (note: InsertableNote) => {
     notes.push({ ...note, createdAt: new Date(), updatedAt: new Date() })
-
-    localStorage.setItem(NOTES_LOCALSTORAGE_KEY, JSON.stringify(notes))
   }
+
+  $effect(() => {
+    localStorage.setItem(NOTES_LOCALSTORAGE_KEY, JSON.stringify(notes))
+  })
 
   let dialog = $state<HTMLDialogElement>()
 
-  $effect(() => console.log(dialog))
+  let editedNote = $state<Note>()
 
-  const editNote = () => {
+  const initiateEditNote = (note: Note) => {
     if (!dialog) return
+    editedNote = note
+
     dialog.showModal()
   }
 
   const closeEditNote = () => {
     if (!dialog) return
     dialog.close()
+  }
+
+  const handleEditNote = (note: Note) => {
+    const noteLocation = notes.indexOf(note)
+    const result = notes.splice(noteLocation, 1, note)
   }
 </script>
 
@@ -49,11 +58,9 @@
         {#if notes.length === 0}
           <li>No notes to display right now. 😴</li>
         {/if}
-        <NoteItem {note} />
+        <NoteItem {note} editNote={initiateEditNote} />
       {/each}
     </ul>
-
-    <Button onclick={editNote} class="bg-white">Edit note</Button>
   </section>
 
   <dialog
@@ -72,15 +79,35 @@
       </button>
     </header>
 
-    <form method="dialog" class="flex flex-col p-4">
-      <label for="title">Title</label>
-      <input type="text" id="title" name="title" required />
-      <label for="content">content</label>
-      <input type="text" id="content" name="content" required />
+    {#if editedNote}
+      <form
+        method="dialog"
+        class="flex flex-col p-4"
+        onsubmit={() => {
+          handleEditNote(editedNote!)
+        }}
+      >
+        <label for="title">Title</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          bind:value={editedNote.title}
+          required
+        />
+        <label for="content">content</label>
+        <input
+          type="text"
+          id="content"
+          name="content"
+          bind:value={editedNote.content}
+          required
+        />
 
-      <Button class="bg-blue-400 hover:bg-blue-500 text-white">
-        Edit note
-      </Button>
-    </form>
+        <Button class="bg-blue-400 hover:bg-blue-500 text-white">
+          Edit note
+        </Button>
+      </form>
+    {/if}
   </dialog>
 </main>
