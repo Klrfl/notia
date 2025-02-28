@@ -1,5 +1,11 @@
 <script lang="ts">
-  const { children, class: className, ...rest } = $props()
+  interface Props {
+    children: any
+    class?: string | string[]
+    [key: string]: unknown
+  }
+
+  const { children, class: className = "", ...rest }: Props = $props()
 </script>
 
 <button

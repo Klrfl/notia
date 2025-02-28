@@ -11,7 +11,8 @@
   const parsedNotes = JSON.parse(
     localStorage.getItem(NOTES_LOCALSTORAGE_KEY) ?? "[]"
   )
-  const notes = $state<Note[]>(parsedNotes)
+
+  let notes = $state<Note[]>(parsedNotes)
 
   const handleAddNewNote = (note: InsertableNote) => {
     notes.push({ ...note, createdAt: new Date(), updatedAt: new Date() })
@@ -39,7 +40,11 @@
 
   const handleEditNote = (note: Note) => {
     const noteLocation = notes.indexOf(note)
-    const result = notes.splice(noteLocation, 1, note)
+    notes.splice(noteLocation, 1, note)
+  }
+
+  const handleDeleteNote = (noteId: Note["id"]) => {
+    notes = notes.filter((note) => note.id !== noteId)
   }
 </script>
 
@@ -58,7 +63,11 @@
         {#if notes.length === 0}
           <li>No notes to display right now. 😴</li>
         {/if}
-        <NoteItem {note} editNote={initiateEditNote} />
+        <NoteItem
+          {note}
+          editNote={initiateEditNote}
+          deleteNote={handleDeleteNote}
+        />
       {/each}
     </ul>
   </section>

@@ -5,9 +5,10 @@
   interface Props {
     note: Note
     editNote: (note: Note) => void
+    deleteNote: (noteId: Note["id"]) => void
   }
 
-  const { note, editNote }: Props = $props()
+  const { note, editNote, deleteNote }: Props = $props()
 </script>
 
 <li
@@ -33,4 +34,5 @@
     class="bg-blue-400 hover:bg-blue-500 text-white"
     onclick={() => editNote(note)}>Edit note</Button
   >
+  <Button onclick={() => deleteNote(note.id)}>Delete note</Button>
 </li>
