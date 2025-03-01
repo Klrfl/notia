@@ -111,15 +111,20 @@
       ?.transaction("notes", "readwrite")
       .objectStore("notes")
 
-    const newNote: Note = {
+    const newNote = {
       ...note,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
 
     const request = notesStore?.add(structuredClone(newNote))
+
     request?.addEventListener("success", () => {
-      notes.push(newNote)
+      const newNoteReq = notesStore?.get(request.result)
+
+      newNoteReq?.addEventListener("success", () =>
+        notes.push(newNoteReq.result)
+      )
     })
 
     request?.addEventListener("error", () => {
