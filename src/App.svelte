@@ -110,26 +110,29 @@
   }
 </script>
 
-<main>
-  <header class="px-8 py-4">
-    <h1 class="text-4xl">{title}</h1>
+<main class="flex">
+  <nav class="min-w-max bg-white outline outline-gray-200 min-h-screen">
+    <header class="px-8 py-4">
+      <h1 class="text-4xl">{title}</h1>
 
-    <Button icon onclick={() => (isAddingNote = true)}>
-      <Plus />
-      Add new note
-    </Button>
+      <Button icon onclick={() => (isAddingNote = true)}>
+        <Plus />
+        Add new note
+      </Button>
 
-    <Dialog bind:isOpen={isAddingNote} heading="Add new note">
-      <NoteForm noteAdded={handleAddNewNote} />
-    </Dialog>
-  </header>
+      <Dialog bind:isOpen={isAddingNote} heading="Add new note">
+        <NoteForm noteAdded={handleAddNewNote} />
+      </Dialog>
+    </header>
+  </nav>
 
-  <section class="px-8">
-    <ul class="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+  <section class="p-8">
+    <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
+      {#if !notes.length}
+        <li>No notes to display right now. 😴</li>
+      {/if}
+
       {#each notes as note (note.id)}
-        {#if notes.length === 0}
-          <li>No notes to display right now. 😴</li>
-        {/if}
         <NoteItem
           {note}
           editNote={initiateEditNote}
