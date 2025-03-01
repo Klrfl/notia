@@ -9,22 +9,66 @@
 
   let title = "Notia"
 
-  const NOTES_LOCALSTORAGE_KEY = "notia-notes"
-  const parsedNotes = JSON.parse(
-    localStorage.getItem(NOTES_LOCALSTORAGE_KEY) ?? "[]"
-  )
+  let db = $state<IDBDatabase>()
+  const openRequest = window.indexedDB.open("testDB")
 
-  let notes = $state<Note[]>(parsedNotes)
+  openRequest.addEventListener("upgradeneeded", () => {
+    db = openRequest.result
+    if (import.meta.env.DEV) console.log("no database yet...", openRequest)
+
+    if (!db.objectStoreNames.contains("notes")) {
+      db.createObjectStore("notes", {
+        keyPath: "id",
+        autoIncrement: true,
+      })
+    }
+  })
+
+  let notes = $state<Note[]>([])
+
+  openRequest.addEventListener("success", () => {
+    db = openRequest.result
+    if (import.meta.env.DEV) console.log("established connection to database.")
+
+    const tx = db.transaction("notes")
+    const store = tx.objectStore("notes")
+    const notesRequest = store.openCursor()
+
+    notesRequest.addEventListener("success", () => {
+      const cursor = notesRequest.result
+
+      if (!cursor) return
+
+      notes.push(cursor.value)
+      cursor.continue()
+    })
+  })
 
   let isAddingNote = $state(false)
-  const handleAddNewNote = (note: InsertableNote) => {
-    notes.push({ ...note, createdAt: new Date(), updatedAt: new Date() })
-    isAddingNote = false
-  }
 
-  $effect(() => {
-    localStorage.setItem(NOTES_LOCALSTORAGE_KEY, JSON.stringify(notes))
-  })
+  const handleAddNewNote = (note: InsertableNote) => {
+    isAddingNote = false
+
+    const notesStore = db
+      ?.transaction("notes", "readwrite")
+      .objectStore("notes")
+
+    const newNote: Note = {
+      ...note,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    const request = notesStore?.add(structuredClone(newNote))
+    request?.addEventListener("success", () => {
+      notes.push(newNote)
+    })
+
+    request?.addEventListener("error", () => {
+      alert("there was an error adding a new note.")
+      console.error(request.error)
+    })
+  }
 
   let editedNote = $state<Note>()
   let isEditingNote = $state(false)
@@ -35,16 +79,28 @@
   }
 
   const handleEditNote = (note: Note) => {
-    const noteLocation = notes.indexOf(note)
-    notes.splice(noteLocation, 1, {
+    const notesStore = db
+      ?.transaction("notes", "readwrite")
+      .objectStore("notes")
+
+    const newNote: Note = {
       ...note,
       updatedAt: new Date(),
-    })
+    }
+
+    notesStore?.put(structuredClone(newNote))
+
+    const noteLocation = notes.indexOf(note)
+    notes.splice(noteLocation, 1, newNote)
 
     isEditingNote = false
   }
 
   const handleDeleteNote = (noteId: Note["id"]) => {
+    const notesStore = db?.transaction("notes", "readwrite")
+    const notesObjectStore = notesStore?.objectStore("notes")
+    notesObjectStore?.delete(noteId)
+
     notes = notes.filter((note) => note.id !== noteId)
   }
 </script>
@@ -65,7 +121,7 @@
 
   <section class="px-8">
     <ul class="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-      {#each notes as note}
+      {#each notes as note (note.id)}
         {#if notes.length === 0}
           <li>No notes to display right now. 😴</li>
         {/if}

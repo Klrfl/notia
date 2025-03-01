@@ -3,13 +3,12 @@
   import Button from "./ui/Button.svelte"
   import type { InsertableNote } from "../types/"
 
-  import { marked, parse } from "marked"
+  import { marked } from "marked"
   import DOMPurify from "dompurify"
 
   const { noteAdded } = $props()
 
   const newNote = $state<InsertableNote>({
-    id: Math.round(Math.random() * 10),
     title: "",
     content: "",
   })
