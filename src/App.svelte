@@ -102,6 +102,20 @@
 
     notes = notes.filter((note) => note.id !== noteId)
   }
+
+  let dialog = $state<HTMLDialogElement>()
+
+  $effect(() => console.log(dialog))
+
+  const editNote = () => {
+    if (!dialog) return
+    dialog.showModal()
+  }
+
+  const closeEditNote = () => {
+    if (!dialog) return
+    dialog.close()
+  }
 </script>
 
 <main class="flex">
@@ -134,6 +148,8 @@
         />
       {/each}
     </ul>
+
+    <Button onclick={editNote} class="bg-white">Edit note</Button>
   </section>
 
   <Dialog bind:isOpen={isEditingNote} heading="Edit note">
