@@ -104,9 +104,29 @@
     notes = notes.filter((note) => note.id !== noteId)
   }
 
-  $effect(() => {
-    localStorage.setItem(NOTES_LOCALSTORAGE_KEY, JSON.stringify(notes))
-  })
+  const handleAddNewNote = (note: InsertableNote) => {
+    isAddingNote = false
+
+    const notesStore = db
+      ?.transaction("notes", "readwrite")
+      .objectStore("notes")
+
+    const newNote: Note = {
+      ...note,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    const request = notesStore?.add(structuredClone(newNote))
+    request?.addEventListener("success", () => {
+      notes.push(newNote)
+    })
+
+    request?.addEventListener("error", () => {
+      alert("there was an error adding a new note.")
+      console.error(request.error)
+    })
+  }
 
   let editedNote = $state<Note>()
   let isEditingNote = $state(false)
@@ -117,16 +137,28 @@
   }
 
   const handleEditNote = (note: Note) => {
-    const noteLocation = notes.indexOf(note)
-    notes.splice(noteLocation, 1, {
+    const notesStore = db
+      ?.transaction("notes", "readwrite")
+      .objectStore("notes")
+
+    const newNote: Note = {
       ...note,
       updatedAt: new Date(),
-    })
+    }
+
+    notesStore?.put(structuredClone(newNote))
+
+    const noteLocation = notes.indexOf(note)
+    notes.splice(noteLocation, 1, newNote)
 
     isEditingNote = false
   }
 
   const handleDeleteNote = (noteId: Note["id"]) => {
+    const notesStore = db?.transaction("notes", "readwrite")
+    const notesObjectStore = notesStore?.objectStore("notes")
+    notesObjectStore?.delete(noteId)
+
     notes = notes.filter((note) => note.id !== noteId)
   }
 </script>
