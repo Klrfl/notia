@@ -38,6 +38,7 @@
 
   let isAddingNote = $state(false)
 
+  let isAddingNote = $state(false)
   const handleAddNewNote = (note: InsertableNote) => {
     isAddingNote = false
 
@@ -107,25 +108,22 @@
     localStorage.setItem(NOTES_LOCALSTORAGE_KEY, JSON.stringify(notes))
   })
 
-  let dialog = $state<HTMLDialogElement>()
-
   let editedNote = $state<Note>()
+  let isEditingNote = $state(false)
 
   const initiateEditNote = (note: Note) => {
-    if (!dialog) return
     editedNote = note
-
-    dialog.showModal()
-  }
-
-  const closeEditNote = () => {
-    if (!dialog) return
-    dialog.close()
+    isEditingNote = true
   }
 
   const handleEditNote = (note: Note) => {
     const noteLocation = notes.indexOf(note)
-    notes.splice(noteLocation, 1, note)
+    notes.splice(noteLocation, 1, {
+      ...note,
+      updatedAt: new Date(),
+    })
+
+    isEditingNote = false
   }
 
   const handleDeleteNote = (noteId: Note["id"]) => {
