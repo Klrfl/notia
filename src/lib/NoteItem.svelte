@@ -18,23 +18,16 @@
   <h2 class="text-xl">{note.title}</h2>
   <p class="text-gray-700">{note.content}</p>
 
-  <div class="flex justify-between text-sm text-gray-700">
-    <p>
-      {Intl.DateTimeFormat("en-US", {
-        dateStyle: "long",
-        timeStyle: "medium",
-      }).format(new Date(note.createdAt))}
-    </p>
+  <p class="text-sm text-gray-500">
+    {Intl.DateTimeFormat("en-US", {
+      dateStyle: "long",
+      timeStyle: "medium",
+    }).format(new Date(note.createdAt))}
+  </p>
 
-    <p>
-      Last updated at {Intl.DateTimeFormat("en-US", {
-        dateStyle: "long",
-        timeStyle: "medium",
-      }).format(new Date(note.updatedAt))}
-    </p>
-  </div>
-
-  <div class="flex gap-4 justify-end">
+  <div
+    class="flex gap-4 flex-wrap lg:justify-end lg:*:flex-[0] *:flex-1 *:min-w-max"
+  >
     <Button
       class="bg-blue-400 hover:bg-blue-500 text-white transition-colors"
       onclick={() => editNote(note)}

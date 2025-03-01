@@ -2,8 +2,10 @@
   import type { Note, InsertableNote } from "./types/"
   import NoteItem from "./lib/NoteItem.svelte"
   import NoteForm from "./lib/NoteForm.svelte"
+  import NoteEdit from "./lib/NoteEdit.svelte"
+  import Dialog from "./lib/ui/Dialog.svelte"
   import Button from "./lib/ui/Button.svelte"
-  import CircleX from "lucide-svelte/icons/circle-x"
+  import { Plus } from "lucide-svelte"
 
   let title = "Notia"
 
@@ -14,33 +16,32 @@
 
   let notes = $state<Note[]>(parsedNotes)
 
+  let isAddingNote = $state(false)
   const handleAddNewNote = (note: InsertableNote) => {
     notes.push({ ...note, createdAt: new Date(), updatedAt: new Date() })
+    isAddingNote = false
   }
 
   $effect(() => {
     localStorage.setItem(NOTES_LOCALSTORAGE_KEY, JSON.stringify(notes))
   })
 
-  let dialog = $state<HTMLDialogElement>()
-
   let editedNote = $state<Note>()
+  let isEditingNote = $state(false)
 
   const initiateEditNote = (note: Note) => {
-    if (!dialog) return
     editedNote = note
-
-    dialog.showModal()
-  }
-
-  const closeEditNote = () => {
-    if (!dialog) return
-    dialog.close()
+    isEditingNote = true
   }
 
   const handleEditNote = (note: Note) => {
     const noteLocation = notes.indexOf(note)
-    notes.splice(noteLocation, 1, note)
+    notes.splice(noteLocation, 1, {
+      ...note,
+      updatedAt: new Date(),
+    })
+
+    isEditingNote = false
   }
 
   const handleDeleteNote = (noteId: Note["id"]) => {
@@ -49,16 +50,21 @@
 </script>
 
 <main>
-  <header class="max-w-7xl mx-auto px-8 py-4">
+  <header class="px-8 py-4">
     <h1 class="text-4xl">{title}</h1>
+
+    <Button onclick={() => (isAddingNote = true)}>
+      <Plus />
+      Add new note
+    </Button>
+
+    <Dialog bind:isOpen={isAddingNote} heading="Add new note">
+      <NoteForm noteAdded={handleAddNewNote} />
+    </Dialog>
   </header>
 
-  <section
-    class="grid gap-8 grid-cols-1 md:grid-cols-6 items-start max-w-7xl mx-auto px-8"
-  >
-    <NoteForm noteAdded={handleAddNewNote} />
-
-    <ul class="flex flex-col gap-4 md:col-span-3 lg:col-span-4">
+  <section class="px-8">
+    <ul class="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
       {#each notes as note}
         {#if notes.length === 0}
           <li>No notes to display right now. 😴</li>
@@ -72,51 +78,9 @@
     </ul>
   </section>
 
-  <dialog
-    bind:this={dialog}
-    class="m-auto w-full md:max-w-xl rounded-lg outline outline-gray-200"
-  >
-    <header class="p-4 flex justify-between items-center">
-      <h2>Edit note</h2>
-
-      <button
-        onclick={closeEditNote}
-        class="cursor-pointer"
-        title="close this dialog"
-      >
-        <CircleX class="hover:text-gray-600" />
-      </button>
-    </header>
-
+  <Dialog bind:isOpen={isEditingNote} heading="Edit note">
     {#if editedNote}
-      <form
-        method="dialog"
-        class="flex flex-col p-4"
-        onsubmit={() => {
-          handleEditNote(editedNote!)
-        }}
-      >
-        <label for="title">Title</label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          bind:value={editedNote.title}
-          required
-        />
-        <label for="content">content</label>
-        <input
-          type="text"
-          id="content"
-          name="content"
-          bind:value={editedNote.content}
-          required
-        />
-
-        <Button class="bg-blue-400 hover:bg-blue-500 text-white">
-          Edit note
-        </Button>
-      </form>
+      <NoteEdit bind:editedNote editNote={handleEditNote} />
     {/if}
-  </dialog>
+  </Dialog>
 </main>
