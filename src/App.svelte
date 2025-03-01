@@ -6,29 +6,21 @@
   import Dialog from "./lib/ui/Dialog.svelte"
   import Button from "./lib/ui/Button.svelte"
   import { Plus } from "lucide-svelte"
+  import { onMount } from "svelte"
+  import { openDB } from "./shared/db.svelte"
 
   let title = "Notia"
 
   let db = $state<IDBDatabase>()
-  const openRequest = window.indexedDB.open("testDB")
-
-  openRequest.addEventListener("upgradeneeded", () => {
-    db = openRequest.result
-    if (import.meta.env.DEV) console.log("no database yet...", openRequest)
-
-    if (!db.objectStoreNames.contains("notes")) {
-      db.createObjectStore("notes", {
-        keyPath: "id",
-        autoIncrement: true,
-      })
-    }
-  })
-
   let notes = $state<Note[]>([])
 
-  openRequest.addEventListener("success", () => {
-    db = openRequest.result
-    if (import.meta.env.DEV) console.log("established connection to database.")
+  onMount(async () => {
+    try {
+      db = await openDB()
+    } catch (error) {
+      console.error("no database found")
+      return console.trace(error)
+    }
 
     const tx = db.transaction("notes")
     const store = tx.objectStore("notes")
@@ -59,19 +51,19 @@
       updatedAt: new Date(),
     }
 
-    const request = notesStore?.add(structuredClone(newNote))
+    const newNoteReq = notesStore?.add(structuredClone(newNote))
 
-    request?.addEventListener("success", () => {
-      const newNoteReq = notesStore?.get(request.result)
+    newNoteReq?.addEventListener("success", () => {
+      const returnNewNote = notesStore?.get(newNoteReq.result)
 
-      newNoteReq?.addEventListener("success", () =>
-        notes.push(newNoteReq.result)
+      returnNewNote?.addEventListener("success", () =>
+        notes.push(returnNewNote.result)
       )
     })
 
-    request?.addEventListener("error", () => {
+    newNoteReq?.addEventListener("error", () => {
       alert("there was an error adding a new note.")
-      console.error(request.error)
+      console.error(newNoteReq.error)
     })
   }
 
@@ -93,12 +85,14 @@
       updatedAt: new Date(),
     }
 
-    notesStore?.put(structuredClone(newNote))
+    const request = notesStore?.put(structuredClone(newNote))
 
-    const noteLocation = notes.indexOf(note)
-    notes.splice(noteLocation, 1, newNote)
+    request?.addEventListener("success", () => {
+      const noteLocation = notes.indexOf(note)
+      notes.splice(noteLocation, 1, newNote)
 
-    isEditingNote = false
+      isEditingNote = false
+    })
   }
 
   const handleDeleteNote = (noteId: Note["id"]) => {
