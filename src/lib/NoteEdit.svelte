@@ -75,14 +75,16 @@
     </span>
   </p>
 
-  <Button class="bg-blue-400 hover:bg-blue-500 text-white text-sm">
+  <Button icon size="sm">
     <Pencil size="1rem" />
     Edit note
   </Button>
 
   <Button
     onclick={() => navigator.clipboard.writeText(editedNote.content)}
-    class="outline outline-gray-200 hover:bg-gray-200 text-sm"
+    icon
+    variant="outline"
+    size="sm"
   >
     <Copy size="1rem" />
     Copy note as text

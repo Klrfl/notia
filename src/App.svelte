@@ -109,7 +109,7 @@
   <header class="px-8 py-4">
     <h1 class="text-4xl">{title}</h1>
 
-    <Button onclick={() => (isAddingNote = true)}>
+    <Button icon onclick={() => (isAddingNote = true)}>
       <Plus />
       Add new note
     </Button>

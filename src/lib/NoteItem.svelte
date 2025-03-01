@@ -28,18 +28,12 @@
   <div
     class="flex gap-4 flex-wrap lg:justify-end lg:*:flex-[0] *:flex-1 *:min-w-max"
   >
-    <Button
-      class="bg-blue-400 hover:bg-blue-500 text-white transition-colors"
-      onclick={() => editNote(note)}
-    >
+    <Button icon onclick={() => editNote(note)}>
       <Pencil size="1rem" class="text-gray-100" />
       Edit note
     </Button>
 
-    <Button
-      onclick={() => deleteNote(note.id)}
-      class="outline outline-gray-300 hover:text-red-500 hover:outline-red-500 transition-colors"
-    >
+    <Button icon variant="danger" onclick={() => deleteNote(note.id)}>
       <Trash size="1rem" />
       Delete note
     </Button>
