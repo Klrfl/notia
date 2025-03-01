@@ -38,7 +38,6 @@
 
   let isAddingNote = $state(false)
 
-  let isAddingNote = $state(false)
   const handleAddNewNote = (note: InsertableNote) => {
     isAddingNote = false
 
@@ -94,69 +93,6 @@
 
       isEditingNote = false
     })
-  }
-
-  const handleDeleteNote = (noteId: Note["id"]) => {
-    const notesStore = db?.transaction("notes", "readwrite")
-    const notesObjectStore = notesStore?.objectStore("notes")
-    notesObjectStore?.delete(noteId)
-
-    notes = notes.filter((note) => note.id !== noteId)
-  }
-
-  const handleAddNewNote = (note: InsertableNote) => {
-    isAddingNote = false
-
-    const notesStore = db
-      ?.transaction("notes", "readwrite")
-      .objectStore("notes")
-
-    const newNote = {
-      ...note,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    const request = notesStore?.add(structuredClone(newNote))
-
-    request?.addEventListener("success", () => {
-      const newNoteReq = notesStore?.get(request.result)
-
-      newNoteReq?.addEventListener("success", () =>
-        notes.push(newNoteReq.result)
-      )
-    })
-
-    request?.addEventListener("error", () => {
-      alert("there was an error adding a new note.")
-      console.error(request.error)
-    })
-  }
-
-  let editedNote = $state<Note>()
-  let isEditingNote = $state(false)
-
-  const initiateEditNote = (note: Note) => {
-    editedNote = note
-    isEditingNote = true
-  }
-
-  const handleEditNote = (note: Note) => {
-    const notesStore = db
-      ?.transaction("notes", "readwrite")
-      .objectStore("notes")
-
-    const newNote: Note = {
-      ...note,
-      updatedAt: new Date(),
-    }
-
-    notesStore?.put(structuredClone(newNote))
-
-    const noteLocation = notes.indexOf(note)
-    notes.splice(noteLocation, 1, newNote)
-
-    isEditingNote = false
   }
 
   const handleDeleteNote = (noteId: Note["id"]) => {
