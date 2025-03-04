@@ -96,6 +96,10 @@
   }
 
   const handleDeleteNote = (noteId: Note["id"]) => {
+    if (!window.confirm("Are you sure you want to delete this note?")) {
+      return
+    }
+
     const notesStore = db?.transaction("notes", "readwrite")
     const notesObjectStore = notesStore?.objectStore("notes")
     notesObjectStore?.delete(noteId)
