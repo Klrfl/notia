@@ -3,9 +3,10 @@
   import NoteItem from "./lib/NoteItem.svelte"
   import NoteForm from "./lib/NoteForm.svelte"
   import NoteEdit from "./lib/NoteEdit.svelte"
+  import NoteCategoryItem from "./lib/NoteCategoryItem.svelte"
   import Dialog from "./lib/ui/Dialog.svelte"
   import Button from "./lib/ui/Button.svelte"
-  import { Plus } from "lucide-svelte"
+  import { Plus, Tag } from "lucide-svelte"
   import { onMount } from "svelte"
   import { openDB } from "./shared/db.svelte"
 
@@ -109,8 +110,10 @@
 </script>
 
 <main class="flex">
-  <nav class="min-w-max bg-white outline outline-gray-200 min-h-screen">
-    <header class="px-8 py-4">
+  <nav
+    class="min-w-max bg-white outline outline-gray-200 min-h-screen px-8 py-4"
+  >
+    <header>
       <h1 class="text-4xl">{title}</h1>
 
       <Button icon onclick={() => (isAddingNote = true)}>
@@ -122,6 +125,19 @@
         <NoteForm noteAdded={handleAddNewNote} />
       </Dialog>
     </header>
+
+    <section class="flex flex-col-reverse">
+      <ul class="grid gap-4">
+        {#each [1, 2, 3, 4] as number}
+          <NoteCategoryItem {number} />
+        {/each}
+      </ul>
+
+      <Button icon variant="outline" onclick={() => alert("not implemented")}>
+        <Tag />
+        Add new category
+      </Button>
+    </section>
   </nav>
 
   <section class="p-8">
