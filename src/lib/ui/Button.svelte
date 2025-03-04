@@ -5,7 +5,7 @@
     children: any
     class?: string | string[]
     icon?: boolean
-    variant?: "outline" | "primary" | "danger"
+    variant?: "outline" | "primary" | "danger" | "none"
     size?: "sm" | "base" | "lg" | "xl"
     [key: string]: unknown
   }
@@ -26,6 +26,8 @@
     className,
     icon && "flex gap-4 justify-center items-center",
     variant === "primary" && "bg-blue-400 hover:bg-blue-500 text-white",
+    variant === "outline" &&
+      "outline-2 outline-slate-200 hover:bg-slate-200/50",
     variant === "danger" && "bg-red-400 hover:bg-red-500 text-white",
     size === "sm" && "px-4 py-3 text-sm",
     size === "base" && "px-6 py-4",
