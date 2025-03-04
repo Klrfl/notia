@@ -6,6 +6,7 @@
   import NoteCategoryItem from "./lib/NoteCategoryItem.svelte"
   import Dialog from "./lib/ui/Dialog.svelte"
   import Button from "./lib/ui/Button.svelte"
+  import Input from "./lib/ui/Input.svelte"
   import { Plus, Tag } from "lucide-svelte"
   import { onMount } from "svelte"
   import { openDB } from "./shared/db.svelte"
@@ -107,6 +108,14 @@
 
     notes = notes.filter((note) => note.id !== noteId)
   }
+
+  let isAddingCategory = $state(false)
+  let newCategory = $state("")
+
+  const addNewCategory = (name: string) => {
+    alert(name)
+    isAddingCategory = false
+  }
 </script>
 
 <main class="flex">
@@ -133,10 +142,32 @@
         {/each}
       </ul>
 
-      <Button icon variant="outline" onclick={() => alert("not implemented")}>
+      <Button icon variant="outline" onclick={() => (isAddingCategory = true)}>
         <Tag />
         Add new category
       </Button>
+
+      <Dialog bind:isOpen={isAddingCategory} heading="Add new category">
+        <form
+          onsubmit={(e) => {
+            e.preventDefault()
+            addNewCategory(newCategory)
+          }}
+          class="grid gap-4"
+        >
+          <label for="category">category</label>
+          <Input
+            autofocus
+            bind:value={newCategory}
+            type="text"
+            name="category"
+            id="category"
+            placeholder="Category name"
+            required
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Dialog>
     </section>
   </nav>
 
