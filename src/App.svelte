@@ -56,7 +56,6 @@
 
   const handleAddNewNote = (note: InsertableNote) => {
     isAddingNote = false
-
     const notesStore = db
       ?.transaction("notes", "readwrite")
       .objectStore("notes")

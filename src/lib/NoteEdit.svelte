@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { Pencil, Copy } from "lucide-svelte"
   import Button from "./ui/Button.svelte"
   import Input from "./ui/Input.svelte"
-  import type { Note } from "../types/"
+  import type { Note, NoteCategory } from "../types/"
 
   import { marked } from "marked"
   import DOMPurify from "dompurify"
-  import { Pencil, Copy } from "lucide-svelte"
+  import { onMount } from "svelte"
+  import { openDB } from "../shared/db.svelte"
 
   interface Props {
     editedNote: Note
@@ -13,13 +15,27 @@
   }
 
   const { editedNote = $bindable(), editNote }: Props = $props()
+
+  let categories = $state<NoteCategory[]>([])
+
+  onMount(async () => {
+    const db = await openDB()
+    const tx = db.transaction("categories")
+    const req = tx.objectStore("categories").getAll()
+
+    req.addEventListener("success", () => (categories = req.result))
+  })
+
+  let selectedCategories = $state([])
 </script>
 
 <form
   method="dialog"
   class="grid grid-cols-6 grid-flow-dense gap-4"
   onsubmit={() => {
-    editNote(editedNote)
+    // you can't unwrap proxies natively
+    // what is wrong with Svelte what the f
+    editNote(JSON.parse(JSON.stringify(editedNote)))
   }}
 >
   <fieldset class="flex flex-col gap-4 col-span-2">
@@ -31,6 +47,31 @@
       bind:value={editedNote.title}
       required
     />
+
+    <fieldset class="grid grid-cols-subgrid">
+      <legend>categories</legend>
+
+      {#if categories?.length}
+        <div class="flex flex-wrap gap-2">
+          {#each categories as category}
+            <label
+              for={`${category.id}-${category.name}`}
+              class="px-3 py-1 cursor-pointer outline-2 outline-gray-200 has-focus-visible:outline-blue-500 has-checked:bg-blue-400 has-checked:outline-blue-500 has-checked:text-white select-none rounded-full"
+            >
+              {category.name}
+
+              <input
+                type="checkbox"
+                class="sr-only"
+                id={`${category.id}-${category.name}`}
+                value={category.id}
+                bind:group={editedNote.categories}
+              />
+            </label>
+          {/each}
+        </div>
+      {/if}
+    </fieldset>
 
     <label for="content">
       content
@@ -48,7 +89,7 @@
   </fieldset>
 
   <div class="preview bg-gray-100 p-4 col-span-4">
-    {#await marked.parse(editedNote.content)}
+    {#await marked.parse(editedNote.content.trim())}
       <p>please wait</p>
     {:then parsed}
       {@html DOMPurify.sanitize(parsed)}

@@ -9,6 +9,7 @@ export interface Note {
   content: string
   createdAt: Date
   updatedAt: Date
+  categories?: Array<NoteCategory["id"]>
 }
 
 export type InsertableNote = Omit<Note, "id" | "createdAt" | "updatedAt">
