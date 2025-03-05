@@ -10,7 +10,7 @@
   const { category, categoryDeleted }: Props = $props()
 </script>
 
-<li class="flex justify-between group outline-2 outline-gray-200">
+<li class="flex justify-between group">
   <Button
     variant="none"
     icon
@@ -27,7 +27,7 @@
     size="sm"
     variant="outline"
     onclick={() => categoryDeleted(category.id)}
-    class="opacity-0 group-hover:opacity-100 transition-opacity"
+    class="opacity-0 focus-visible:opacity-100 group-hover:opacity-100 transition-opacity"
   >
     <Trash />
   </Button>
