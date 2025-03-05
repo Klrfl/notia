@@ -143,6 +143,18 @@
     })
   }
 
+  const editCategory = (id: NoteCategory["id"], name: NoteCategory["name"]) => {
+    const newCategory = { id, name }
+
+    const tx = db?.transaction("categories", "readwrite")
+    const req = tx?.objectStore("categories").put(newCategory)
+
+    req?.addEventListener("success", () => {
+      noteCategories.splice(noteCategories.indexOf(newCategory), 1, newCategory)
+      console.log("successfully edited category")
+    })
+  }
+
   const deleteCategory = (categoryId: number) => {
     if (!window.confirm("are you sure?")) return
     const categoryStore = db
@@ -176,11 +188,15 @@
     </header>
 
     <section class="flex flex-col-reverse">
-      <ul class="grid gap-4">
-        {#each noteCategories as category}
-          <NoteCategoryItem {category} categoryDeleted={deleteCategory} />
+      <menu class="grid gap-4">
+        {#each noteCategories as category (category.id)}
+          <NoteCategoryItem
+            {category}
+            categoryEdited={editCategory}
+            categoryDeleted={deleteCategory}
+          />
         {/each}
-      </ul>
+      </menu>
 
       <Button icon variant="outline" onclick={() => (isAddingCategory = true)}>
         <Tag />
