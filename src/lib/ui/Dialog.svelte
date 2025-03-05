@@ -18,8 +18,16 @@
 <dialog
   bind:this={dialog}
   onclose={() => (isOpen = false)}
-  class="grid not-open:translate-y-1 open:translate-y-0 not-open:pointer-events-none not-open:opacity-0 open:opacity-100 transition-opacity mt-auto md:mx-auto md:my-auto rounded-lg backdrop:backdrop-blur-lg backdrop:bg-black/50"
-  style="width: min(var(--container-7xl), 100%)"
+  class={[
+    "fixed inset-0",
+    "grid not-open:translate-y-10 md:not-open:-translate-y-4 open:translate-y-0",
+    "not-open:pointer-events-none not-open:opacity-0 open:opacity-100",
+    "transition duration-300 ease-in-out",
+    "mt-auto md:mx-auto md:my-auto",
+    "rounded-lg shadow-lg backdrop:backdrop-blur-sm",
+    "max-w-6xl",
+  ]}
+  inert={!isOpen}
 >
   <header class="pt-8 px-8 flex justify-between items-center">
     <h2>{heading}</h2>
