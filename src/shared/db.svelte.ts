@@ -1,30 +1,40 @@
-export let db = $state<IDBDatabase>()
+export async function openDB(): Promise<IDBDatabase> {
+  let db = $state<IDBDatabase>()
 
-export function openDB(): Promise<IDBDatabase> {
-  const openRequest = window.indexedDB.open("testDB")
+  const openRequest = window.indexedDB.open("notia", 1)
 
   return new Promise((resolve, reject) => {
     openRequest.addEventListener("upgradeneeded", () => {
       if (import.meta.env.DEV) console.log("no database yet...", openRequest)
 
-      if (!db?.objectStoreNames.contains("notes")) {
-        db?.createObjectStore("notes", {
+      // create necessary object stores
+      // to store notes and categories
+      db = openRequest.result
+
+      if (!db.objectStoreNames.contains("notes")) {
+        db.createObjectStore("notes", {
           keyPath: "id",
           autoIncrement: true,
         })
       }
 
-      return resolve(openRequest.result)
+      if (!db.objectStoreNames.contains("categories")) {
+        db.createObjectStore("categories", {
+          keyPath: "id",
+          autoIncrement: true,
+        })
+      }
     })
 
     openRequest.addEventListener("success", () => {
-      if (import.meta.env.DEV)
-        console.log("established connection to database.")
-      return resolve(openRequest.result)
+      db = openRequest.result
+      resolve(db)
+      return console.log("connection established to database.")
     })
 
     openRequest.addEventListener("error", () => {
-      return reject(new Error("error when connecting to database."))
+      reject(openRequest.error)
+      console.log("there was an error when connecting to database.")
     })
   })
 }
