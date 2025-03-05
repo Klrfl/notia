@@ -1,3 +1,8 @@
+export interface NoteCategory {
+  id: number
+  name: string
+}
+
 export interface Note {
   id: number
   title: string

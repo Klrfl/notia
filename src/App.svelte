@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Note, InsertableNote } from "./types/"
+  import type { Note, InsertableNote, NoteCategory } from "./types/"
   import NoteItem from "./lib/NoteItem.svelte"
   import NoteForm from "./lib/NoteForm.svelte"
   import NoteEdit from "./lib/NoteEdit.svelte"
@@ -15,23 +15,38 @@
 
   let db = $state<IDBDatabase>()
   let notes = $state<Note[]>([])
+  let noteCategories = $state<NoteCategory[]>([])
+
+  const initialize = (db: IDBDatabase) => {
+    const notesTx = db.transaction("notes")
+    const notesReq = notesTx.objectStore("notes").openCursor()
+
+    notesReq.addEventListener("success", () => {
+      const cursor = notesReq.result
+
+      if (!cursor) return
+      notes.push(cursor.value)
+      cursor.continue()
+    })
+
+    const categoriesTx = db.transaction("categories")
+    const noteCategoriesReq = categoriesTx
+      .objectStore("categories")
+      .openCursor()
+
+    noteCategoriesReq.addEventListener("success", () => {
+      const cursor = noteCategoriesReq.result
+
+      if (!cursor) return
+      noteCategories.push(cursor.value)
+      cursor.continue()
+    })
+  }
 
   onMount(async () => {
     try {
       db = await openDB()
-
-      const tx = db.transaction("notes")
-      const store = tx.objectStore("notes")
-      const notesRequest = store.openCursor()
-
-      notesRequest.addEventListener("success", () => {
-        const cursor = notesRequest.result
-
-        if (!cursor) return
-
-        notes.push(cursor.value)
-        cursor.continue()
-      })
+      initialize(db)
     } catch (error) {
       return console.error(error)
     }
@@ -112,8 +127,21 @@
   let newCategory = $state("")
 
   const addNewCategory = (name: string) => {
-    alert(name)
     isAddingCategory = false
+
+    const categoryStore = db
+      ?.transaction("categories", "readwrite")
+      .objectStore("categories")
+
+    const req = categoryStore?.add({ name })
+
+    req?.addEventListener("success", () => {
+      const returnReq = categoryStore?.get(req.result)
+
+      returnReq?.addEventListener("success", () => {
+        noteCategories.push(returnReq.result)
+      })
+    })
   }
 </script>
 
@@ -136,8 +164,8 @@
 
     <section class="flex flex-col-reverse">
       <ul class="grid gap-4">
-        {#each [1, 2, 3, 4] as number}
-          <NoteCategoryItem {number} />
+        {#each noteCategories as category}
+          <NoteCategoryItem {category} />
         {/each}
       </ul>
 
