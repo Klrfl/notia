@@ -1,6 +1,7 @@
 <script lang="ts">
   import Plus from "lucide-svelte/icons/plus"
   import Button from "./ui/Button.svelte"
+  import Input from "./ui/Input.svelte"
   import type { InsertableNote } from "../types/"
 
   import { marked } from "marked"
@@ -23,12 +24,11 @@
 >
   <fieldset class="flex flex-col gap-4 col-span-full md:col-span-2">
     <label for="title">title</label>
-    <input
+    <Input
       type="text"
       id="title"
       name="title"
       placeholder="title"
-      class="bg-gray-200/50 focus-visible:outline focus-visible:outline-gray-500 px-4 py-2"
       required
       bind:value={newNote.title}
     />

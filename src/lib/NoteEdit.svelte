@@ -1,5 +1,6 @@
 <script lang="ts">
   import Button from "./ui/Button.svelte"
+  import Input from "./ui/Input.svelte"
   import type { Note } from "../types/"
 
   import { marked } from "marked"
@@ -23,11 +24,10 @@
 >
   <fieldset class="flex flex-col gap-4 col-span-2">
     <label for="title">Title</label>
-    <input
+    <Input
       type="text"
       id="title"
       name="title"
-      class="bg-gray-200/50 focus-visible:outline focus-visible:outline-gray-500 px-4 py-2"
       bind:value={editedNote.title}
       required
     />
