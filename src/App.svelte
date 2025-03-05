@@ -19,23 +19,22 @@
   onMount(async () => {
     try {
       db = await openDB()
+
+      const tx = db.transaction("notes")
+      const store = tx.objectStore("notes")
+      const notesRequest = store.openCursor()
+
+      notesRequest.addEventListener("success", () => {
+        const cursor = notesRequest.result
+
+        if (!cursor) return
+
+        notes.push(cursor.value)
+        cursor.continue()
+      })
     } catch (error) {
-      console.error("no database found")
-      return console.trace(error)
+      return console.error(error)
     }
-
-    const tx = db.transaction("notes")
-    const store = tx.objectStore("notes")
-    const notesRequest = store.openCursor()
-
-    notesRequest.addEventListener("success", () => {
-      const cursor = notesRequest.result
-
-      if (!cursor) return
-
-      notes.push(cursor.value)
-      cursor.continue()
-    })
   })
 
   let isAddingNote = $state(false)
