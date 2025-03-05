@@ -143,6 +143,20 @@
       })
     })
   }
+
+  const deleteCategory = (categoryId: number) => {
+    if (!window.confirm("are you sure?")) return
+    const categoryStore = db
+      ?.transaction("categories", "readwrite")
+      .objectStore("categories")
+    const req = categoryStore?.delete(categoryId)
+
+    req?.addEventListener("success", () => {
+      console.log("successfully deleted category.")
+    })
+
+    noteCategories = noteCategories.filter(({ id }) => id !== categoryId)
+  }
 </script>
 
 <main class="flex">
@@ -165,7 +179,7 @@
     <section class="flex flex-col-reverse">
       <ul class="grid gap-4">
         {#each noteCategories as category}
-          <NoteCategoryItem {category} />
+          <NoteCategoryItem {category} categoryDeleted={deleteCategory} />
         {/each}
       </ul>
 
