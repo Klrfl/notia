@@ -6,35 +6,56 @@
   import Dialog from "./ui/Dialog.svelte"
 
   interface Props {
+    showEditButton: boolean
     category: NoteCategory
     categoryEdited: (
       id: NoteCategory["id"],
       newName: NoteCategory["name"]
     ) => void
     categoryDeleted: (id: NoteCategory["id"]) => void
+    toggleCategoryFilter: (id: NoteCategory["id"]) => void
   }
 
-  const { category, categoryEdited, categoryDeleted }: Props = $props()
+  const {
+    category,
+    showEditButton,
+    categoryEdited,
+    categoryDeleted,
+    toggleCategoryFilter,
+  }: Props = $props()
 
   let newCategory = $state(category.name)
   let isEditing = $state(false)
 </script>
 
 <li class="hover:bg-gray-200/70 flex justify-between group">
-  <Button
-    variant="none"
-    icon
-    onclick={() => (isEditing = true)}
-    class="w-full text-gray-700 flex gap-2 justify-start"
-    size="sm"
-  >
-    <div>
-      <Pencil class="hidden group-hover:block" />
-      <Tag class="block group-hover:hidden" />
-    </div>
-
-    {category.name}
-  </Button>
+  {#if !showEditButton}
+    <Button
+      variant="none"
+      icon
+      onclick={() => toggleCategoryFilter(category.id)}
+      class="w-full text-gray-700 flex gap-2 justify-start"
+      size="sm"
+    >
+      <div>
+        <Tag />
+      </div>
+      {category.name}
+    </Button>
+  {:else}
+    <Button
+      variant="none"
+      icon
+      onclick={() => (isEditing = true)}
+      class="w-full text-gray-700 flex gap-2 justify-start"
+      size="sm"
+    >
+      <div>
+        <Pencil />
+      </div>
+      {category.name}
+    </Button>
+  {/if}
 
   <Dialog bind:isOpen={isEditing} heading="Edit category name">
     <form

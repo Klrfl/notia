@@ -16,7 +16,7 @@
 
   const { editedNote = $bindable(), editNote }: Props = $props()
 
-  let categories = $state<NoteCategory[]>([])
+  let categories: NoteCategory[] = $state([])
 
   onMount(async () => {
     const db = await openDB()

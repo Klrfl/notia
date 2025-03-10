@@ -7,7 +7,7 @@
   import Dialog from "./lib/ui/Dialog.svelte"
   import Button from "./lib/ui/Button.svelte"
   import Input from "./lib/ui/Input.svelte"
-  import { Plus, Tag } from "lucide-svelte"
+  import { Pencil, Plus, Tag } from "lucide-svelte"
   import { onMount } from "svelte"
   import { openDB } from "./shared/db.svelte"
 
@@ -143,6 +143,12 @@
     })
   }
 
+  let isEditingCategory = $state(false)
+
+  const toggleEditCategory = (s: boolean) => {
+    isEditingCategory = !isEditingCategory
+  }
+
   const editCategory = (id: NoteCategory["id"], name: NoteCategory["name"]) => {
     const newCategory = { id, name }
 
@@ -192,8 +198,10 @@
         {#each noteCategories as category (category.id)}
           <NoteCategoryItem
             {category}
+            showEditButton={isEditingCategory}
             categoryEdited={editCategory}
             categoryDeleted={deleteCategory}
+            toggleCategoryFilter={(id) => console.log(id)}
           />
         {/each}
       </menu>
@@ -201,6 +209,15 @@
       <Button icon variant="outline" onclick={() => (isAddingCategory = true)}>
         <Tag />
         Add new category
+      </Button>
+
+      <Button
+        icon
+        variant="outline"
+        onclick={() => toggleEditCategory(isEditingCategory)}
+      >
+        <Pencil />
+        Edit categories
       </Button>
 
       <Dialog bind:isOpen={isAddingCategory} heading="Add new category">
