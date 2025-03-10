@@ -53,7 +53,7 @@
 
       {#if categories?.length}
         <div class="flex flex-wrap gap-2">
-          {#each categories as category}
+          {#each categories as category (category.id)}
             <label
               for={`${category.id}-${category.name}`}
               class="px-3 py-1 cursor-pointer outline-2 outline-gray-200 has-focus-visible:outline-blue-500 has-checked:bg-blue-400 has-checked:outline-blue-500 has-checked:text-white select-none rounded-full"

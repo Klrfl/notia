@@ -1,13 +1,12 @@
 <script lang="ts">
+  import type { HTMLButtonAttributes } from "svelte/elements"
   import { Button } from "bits-ui"
 
-  interface Props {
-    children: any
+  interface Props extends HTMLButtonAttributes {
     class?: string | string[]
     icon?: boolean
     variant?: "outline" | "primary" | "danger" | "none"
     size?: "sm" | "base" | "lg" | "xl"
-    [key: string]: unknown
   }
 
   const {

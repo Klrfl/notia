@@ -1,18 +1,16 @@
 <script lang="ts">
+  import type { HTMLDialogAttributes } from "svelte/elements"
   import { CircleX } from "lucide-svelte"
 
-  interface Props {
+  interface Props extends HTMLDialogAttributes {
     isOpen: boolean
     heading: string
-    children: any
   }
 
   let { isOpen = $bindable(false), heading, children }: Props = $props()
   let dialog = $state<HTMLDialogElement>()
 
-  $effect(() => {
-    isOpen ? dialog!.showModal() : dialog!.close()
-  })
+  $effect(() => (isOpen ? dialog!.showModal() : dialog!.close()))
 </script>
 
 <dialog
@@ -42,8 +40,6 @@
   </header>
 
   <section class="p-8">
-    {#if children}
-      {@render children()}
-    {/if}
+    {@render children?.()}
   </section>
 </dialog>
