@@ -143,7 +143,7 @@
 
   let isEditingCategory = $state(false)
 
-  const toggleEditCategory = (s: boolean) => {
+  const toggleEditCategory = () => {
     isEditingCategory = !isEditingCategory
   }
 
@@ -209,11 +209,7 @@
         Add new category
       </Button>
 
-      <Button
-        icon
-        variant="outline"
-        onclick={() => toggleEditCategory(isEditingCategory)}
-      >
+      <Button icon variant="outline" onclick={() => toggleEditCategory()}>
         <Pencil />
         Edit categories
       </Button>
