@@ -19,14 +19,10 @@
 
   const initialize = (db: IDBDatabase) => {
     const notesTx = db.transaction("notes")
-    const notesReq = notesTx.objectStore("notes").openCursor()
+    const notesReq = notesTx.objectStore("notes").getAll()
 
     notesReq.addEventListener("success", () => {
-      const cursor = notesReq.result
-
-      if (!cursor) return
-      notes.push(cursor.value)
-      cursor.continue()
+      notes = notesReq.result
     })
 
     const categoriesTx = db.transaction("categories")
@@ -90,21 +86,23 @@
     isEditingNote = true
   }
 
-  const handleEditNote = (note: Note) => {
+  const handleEditNote = (editedNote: Note) => {
     const notesStore = db
       ?.transaction("notes", "readwrite")
       .objectStore("notes")
 
     const newNote: Note = {
-      ...note,
+      ...editedNote,
       updatedAt: new Date(),
     }
 
     const request = notesStore?.put(structuredClone(newNote))
 
     request?.addEventListener("success", () => {
-      const noteLocation = notes.indexOf(note)
-      notes.splice(noteLocation, 1, newNote)
+      const noteLocation = notes.find(({ id }) => id === editedNote.id)
+      if (!noteLocation) return alert("can't edit your note for some reason.")
+
+      notes.splice(notes.indexOf(noteLocation), 1, newNote)
 
       isEditingNote = false
     })
