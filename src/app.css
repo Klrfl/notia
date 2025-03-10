@@ -7,3 +7,34 @@
 body {
   @apply font-sans bg-gray-100;
 }
+
+.preview :is(h1, h2, h3, h4, h5, h6) {
+  @apply font-bold;
+}
+
+.preview h1 {
+  @apply text-3xl;
+}
+
+.preview h2 {
+  @apply text-2xl;
+}
+.preview h3 {
+  @apply text-xl;
+}
+
+.preview h4 {
+  @apply text-lg;
+}
+
+.preview h6 {
+  @apply italic;
+}
+
+.preview :is(ul, li) {
+  @apply list-disc;
+}
+
+.preview ul {
+  @apply ml-4 my-4;
+}

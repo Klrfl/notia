@@ -25,8 +25,6 @@
 
     req.addEventListener("success", () => (categories = req.result))
   })
-
-  let selectedCategories = $state([])
 </script>
 
 <form
@@ -134,35 +132,4 @@
 
 <style>
   @reference "../app.css";
-
-  :global(.preview :is(h1, h2, h3, h4, h5, h6)) {
-    @apply font-bold;
-  }
-
-  :global(.preview h1) {
-    @apply text-3xl;
-  }
-
-  :global(.preview h2) {
-    @apply text-2xl;
-  }
-  :global(.preview h3) {
-    @apply text-xl;
-  }
-
-  :global(.preview h4) {
-    @apply text-lg;
-  }
-
-  :global(.preview h6) {
-    @apply italic;
-  }
-
-  :global(.preview :is(ul, li)) {
-    @apply list-disc;
-  }
-
-  :global(.preview ul) {
-    @apply ml-4 my-4;
-  }
 </style>

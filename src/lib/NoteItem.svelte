@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { marked } from "marked"
+  import DOMPurify from "dompurify"
   import type { Note } from "../types/"
   import Button from "./ui/Button.svelte"
   import { Pencil, Trash } from "lucide-svelte"
@@ -16,7 +18,16 @@
   class="bg-white outline outline-gray-200 flex flex-col gap-4 p-8 rounded-lg"
 >
   <h2 class="text-xl">{note.title}</h2>
-  <p class="text-gray-700 line-clamp-3">{note.content}</p>
+
+  <article class="text-gray-700 line-clamp-3 preview">
+    {#await marked.parse(note.content.trim())}
+      tunggu sebentar
+    {:then parsed}
+      {@html DOMPurify.sanitize(parsed)}
+    {:catch}
+      Something went wrong
+    {/await}
+  </article>
 
   <div
     class="grid grid-cols-2 gap-4 flex-wrap lg:justify-end lg:*:flex-[0] *:flex-1 *:min-w-max mt-auto"
