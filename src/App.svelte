@@ -15,6 +15,21 @@
 
   let db = $state<IDBDatabase>()
   let notes = $state<Note[]>([])
+
+  let selectedCategories: number[] = $state([])
+  let filteredNotes = $derived(
+    !selectedCategories.length
+      ? notes
+      : notes.filter((note) => {
+          return (
+            note.categories &&
+            note.categories?.some((category) =>
+              selectedCategories.includes(category)
+            )
+          )
+        })
+  )
+
   let noteCategories = $state<NoteCategory[]>([])
 
   const initialize = (db: IDBDatabase) => {
@@ -172,6 +187,15 @@
 
     noteCategories = noteCategories.filter(({ id }) => id !== categoryId)
   }
+
+  const handleFilterByCategory = (targetId: number) => {
+    const id = selectedCategories.find((id) => id === targetId)
+    if (!id) {
+      return selectedCategories.push(targetId)
+    }
+
+    selectedCategories.splice(selectedCategories.indexOf(id), 1)
+  }
 </script>
 
 <main class="flex">
@@ -199,7 +223,7 @@
             showEditButton={isEditingCategory}
             categoryEdited={editCategory}
             categoryDeleted={deleteCategory}
-            toggleCategoryFilter={(id) => console.log(id)}
+            toggleCategoryFilter={(id) => handleFilterByCategory(id)}
           />
         {/each}
       </menu>
@@ -238,20 +262,20 @@
     </section>
   </nav>
 
-  <section class="p-8">
-    <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
-      {#if !notes.length}
-        <li>No notes to display right now. 😴</li>
-      {/if}
-
-      {#each notes as note (note.id)}
-        <NoteItem
-          {note}
-          editNote={initiateEditNote}
-          deleteNote={handleDeleteNote}
-        />
-      {/each}
-    </ul>
+  <section class="p-8 grow">
+    {#if !filteredNotes.length}
+      <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
+    {:else}
+      <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
+        {#each filteredNotes as note (note.id)}
+          <NoteItem
+            {note}
+            editNote={initiateEditNote}
+            deleteNote={handleDeleteNote}
+          />
+        {/each}
+      </ul>
+    {/if}
   </section>
 
   <Dialog bind:isOpen={isEditingNote} heading="Edit note">

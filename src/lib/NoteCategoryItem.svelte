@@ -25,6 +25,7 @@
   }: Props = $props()
 
   let newCategory = $state(category.name)
+  let isCategoryInFilter = $state(false)
   let isEditing = $state(false)
 </script>
 
@@ -33,8 +34,14 @@
     <Button
       variant="none"
       icon
-      onclick={() => toggleCategoryFilter(category.id)}
-      class="w-full text-gray-700 flex gap-2 justify-start"
+      onclick={() => {
+        isCategoryInFilter = !isCategoryInFilter
+        toggleCategoryFilter(category.id)
+      }}
+      class={[
+        "w-full flex gap-2 justify-start",
+        isCategoryInFilter ? "bg-blue-500 text-white" : "text-gray-700 ",
+      ]}
       size="sm"
     >
       <div>
