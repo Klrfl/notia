@@ -16,18 +16,17 @@
   class="bg-white outline outline-gray-200 flex flex-col gap-4 p-8 rounded-lg"
 >
   <h2 class="text-xl">{note.title}</h2>
-  <p class="text-gray-700">{note.content}</p>
-
-  <p class="text-sm text-gray-500">
-    {Intl.DateTimeFormat("en-US", {
-      dateStyle: "long",
-      timeStyle: "medium",
-    }).format(new Date(note.createdAt))}
-  </p>
+  <p class="text-gray-700 line-clamp-3">{note.content}</p>
 
   <div
-    class="flex gap-4 flex-wrap lg:justify-end lg:*:flex-[0] *:flex-1 *:min-w-max"
+    class="grid grid-cols-2 gap-4 flex-wrap lg:justify-end lg:*:flex-[0] *:flex-1 *:min-w-max mt-auto"
   >
+    <p class="col-span-2 justify-self-end text-sm text-gray-500">
+      {Intl.DateTimeFormat("en-US", {
+        dateStyle: "long",
+        timeStyle: "medium",
+      }).format(new Date(note.createdAt))}
+    </p>
     <Button icon onclick={() => editNote(note)}>
       <Pencil size="1rem" class="text-gray-100" />
       Edit note
