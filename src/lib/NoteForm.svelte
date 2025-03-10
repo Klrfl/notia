@@ -41,6 +41,10 @@
     // you can't unwrap proxies natively
     // what is wrong with Svelte what the f
     noteAdded(JSON.parse(JSON.stringify(newNote)))
+
+    newNote.title = ""
+    newNote.content = ""
+    newNote.categories = []
   }}
 >
   <div class="flex flex-col gap-4 col-span-full md:col-span-2">
