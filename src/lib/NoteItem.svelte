@@ -1,9 +1,12 @@
 <script lang="ts">
+  import type { Note } from "../types/"
+  import { fade } from "svelte/transition"
+  import Button from "./ui/Button.svelte"
+
+  import { Pencil, Trash } from "lucide-svelte"
+
   import { marked } from "marked"
   import DOMPurify from "dompurify"
-  import type { Note } from "../types/"
-  import Button from "./ui/Button.svelte"
-  import { Pencil, Trash } from "lucide-svelte"
 
   interface Props {
     note: Note
@@ -16,6 +19,7 @@
 
 <li
   class="bg-white outline outline-gray-200 flex flex-col gap-4 p-8 rounded-lg"
+  transition:fade
 >
   <h2 class="text-xl">{note.title}</h2>
 

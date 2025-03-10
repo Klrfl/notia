@@ -4,10 +4,13 @@
   import NoteForm from "./lib/NoteForm.svelte"
   import NoteEdit from "./lib/NoteEdit.svelte"
   import NoteCategoryItem from "./lib/NoteCategoryItem.svelte"
+
   import Dialog from "./lib/ui/Dialog.svelte"
   import Button from "./lib/ui/Button.svelte"
   import Input from "./lib/ui/Input.svelte"
+
   import { Pencil, Plus, Tag } from "lucide-svelte"
+
   import { onMount } from "svelte"
   import { openDB } from "./shared/db.svelte"
 
