@@ -29,7 +29,9 @@
   let isEditing = $state(false)
 </script>
 
-<li class="hover:bg-gray-200/70 flex justify-between group">
+<li
+  class="hover:bg-gray-200/70 flex justify-between group max-w-[25ch] text-left"
+>
   {#if !showEditButton}
     <Button
       variant="none"
@@ -47,7 +49,9 @@
       <div>
         <Tag />
       </div>
-      {category.name}
+      <span class="whitespace-nowrap overflow-hidden overflow-ellipsis">
+        {category.name}
+      </span>
     </Button>
   {:else}
     <Button

@@ -201,71 +201,71 @@
   }
 </script>
 
-<main class="flex">
-  <nav
-    class="min-w-max bg-white outline outline-gray-200 min-h-screen px-8 py-4"
+<main class="main-grid">
+  <header
+    class="header col-span-full px-8 py-4 bg-white border-b-2 border-b-gray-200"
   >
-    <header>
-      <h1 class="text-4xl">{title}</h1>
+    <h1 class="text-4xl text-slate-700">{title}</h1>
+  </header>
 
-      <Button icon onclick={() => (isAddingNote = true)}>
-        <Plus />
-        Add new note
-      </Button>
+  <nav
+    class="sidebar grid content-start bg-white border-r-2 border-r-gray-200 min-h-screen px-8 py-4"
+  >
+    <Button icon onclick={() => (isAddingNote = true)}>
+      <Plus />
+      Add new note
+    </Button>
 
-      <Dialog bind:isOpen={isAddingNote} heading="Add new note">
-        <NoteForm noteAdded={handleAddNewNote} />
-      </Dialog>
-    </header>
+    <Dialog bind:isOpen={isAddingNote} heading="Add new note">
+      <NoteForm noteAdded={handleAddNewNote} />
+    </Dialog>
 
-    <section class="flex flex-col-reverse">
-      <menu class="grid gap-4">
-        {#each noteCategories as category (category.id)}
-          <NoteCategoryItem
-            {category}
-            showEditButton={isEditingCategory}
-            categoryEdited={editCategory}
-            categoryDeleted={deleteCategory}
-            toggleCategoryFilter={(id) => handleFilterByCategory(id)}
-          />
-        {/each}
-      </menu>
+    <menu class="contents">
+      {#each noteCategories as category (category.id)}
+        <NoteCategoryItem
+          {category}
+          showEditButton={isEditingCategory}
+          categoryEdited={editCategory}
+          categoryDeleted={deleteCategory}
+          toggleCategoryFilter={(id) => handleFilterByCategory(id)}
+        />
+      {/each}
+    </menu>
 
-      <Button icon variant="outline" onclick={() => (isAddingCategory = true)}>
-        <Tag />
-        Add new category
-      </Button>
+    <Button icon variant="outline" onclick={() => (isAddingCategory = true)}>
+      <Tag />
+      Add new category
+    </Button>
 
-      <Button icon variant="outline" onclick={() => toggleEditCategory()}>
-        <Pencil />
-        Edit categories
-      </Button>
+    <Button icon variant="outline" onclick={() => toggleEditCategory()}>
+      <Pencil />
+      Edit categories
+    </Button>
 
-      <Dialog bind:isOpen={isAddingCategory} heading="Add new category">
-        <form
-          onsubmit={(e) => {
-            e.preventDefault()
-            addNewCategory(newCategory)
-          }}
-          class="grid gap-4"
-        >
-          <label for="category">category</label>
-          <Input
-            autofocus
-            bind:value={newCategory}
-            type="text"
-            name="category"
-            id="category"
-            placeholder="Category name"
-            required
-          />
-          <Button type="submit">Submit</Button>
-        </form>
-      </Dialog>
-    </section>
+    <Dialog bind:isOpen={isAddingCategory} heading="Add new category">
+      <form
+        onsubmit={(e) => {
+          e.preventDefault()
+          addNewCategory(newCategory)
+        }}
+        class="grid gap-4"
+      >
+        <label for="category">category</label>
+        <Input
+          autofocus
+          bind:value={newCategory}
+          type="text"
+          name="category"
+          id="category"
+          placeholder="Category name"
+          required
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Dialog>
   </nav>
 
-  <section class="p-8 grow">
+  <section class="content p-8">
     {#if !filteredNotes.length}
       <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
     {:else}
@@ -287,3 +287,27 @@
     {/if}
   </Dialog>
 </main>
+
+<style>
+  .main-grid {
+    display: grid;
+    grid-template-columns:
+      [sidebar-start]
+      max-content
+      [sidebar-end content-start]
+      repeat(10, 1fr)
+      [content-end];
+  }
+
+  .header {
+    grid-column: 1/-1;
+  }
+
+  .sidebar {
+    grid-column: sidebar;
+  }
+
+  .content {
+    grid-column: content;
+  }
+</style>
