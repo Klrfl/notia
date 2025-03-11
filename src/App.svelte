@@ -285,6 +285,7 @@
         onsubmit={(e) => {
           e.preventDefault()
           addNewCategory(newCategory)
+          newCategory = ""
         }}
         class="grid gap-4"
       >

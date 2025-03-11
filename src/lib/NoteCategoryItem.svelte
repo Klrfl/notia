@@ -34,7 +34,7 @@
 </script>
 
 <li
-  class="hover:bg-gray-200/70 flex justify-between group md:max-w-[25ch] text-left"
+  class="hover:bg-gray-200/70 flex justify-between group md:max-w-[25ch] text-left relative"
 >
   <Button
     variant="none"
@@ -95,7 +95,7 @@
       size="sm"
       variant="outline"
       onclick={() => categoryDeleted(category.id)}
-      class="opacity-0 focus-visible:opacity-100 group-hover:opacity-100 transition-opacity"
+      class="absolute right-0 opacity-0 focus-visible:opacity-100 group-hover:opacity-100 transition-opacity bg-gray-200"
     >
       <Trash />
     </Button>
