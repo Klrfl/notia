@@ -34,20 +34,32 @@
   </article>
 
   <div
-    class="grid grid-cols-2 gap-4 flex-wrap lg:justify-end lg:*:flex-[0] *:flex-1 *:min-w-max mt-auto"
+    class="@container grid grid-cols-2 gap-2 sm:gap-4 lg:justify-end *:min-w-max mt-auto"
   >
-    <p class="col-span-2 justify-self-end text-sm text-gray-500">
+    <p class="col-span-full justify-self-end text-sm text-gray-500">
       {Intl.DateTimeFormat("en-US", {
         dateStyle: "long",
         timeStyle: "medium",
       }).format(new Date(note.createdAt))}
     </p>
-    <Button icon onclick={() => editNote(note)}>
+
+    <Button
+      icon
+      onclick={() => editNote(note)}
+      size="sm"
+      class="@max-2xs:col-span-full"
+    >
       <Pencil size="1rem" class="text-gray-100" />
       Edit note
     </Button>
 
-    <Button icon variant="danger" onclick={() => deleteNote(note.id)}>
+    <Button
+      icon
+      variant="danger"
+      onclick={() => deleteNote(note.id)}
+      size="sm"
+      class="@max-2xs:col-span-full"
+    >
       <Trash size="1rem" />
       Delete note
     </Button>
