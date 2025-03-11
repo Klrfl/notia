@@ -353,7 +353,11 @@
 
   <Dialog bind:isOpen={isEditingNote} heading="Edit note">
     {#if editedNote}
-      <NoteEdit bind:editedNote editNote={handleEditNote} />
+      <NoteEdit
+        bind:editedNote
+        categories={noteCategories}
+        editNote={handleEditNote}
+      />
     {/if}
   </Dialog>
 </main>

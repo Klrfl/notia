@@ -10,24 +10,14 @@
   import { marked } from "marked"
   import DOMPurify from "dompurify"
   import { onMount } from "svelte"
-  import { openDB } from "../shared/db.svelte"
 
   interface Props {
     editedNote: Note
     editNote: (note: Note) => void
+    categories: NoteCategory[]
   }
 
-  const { editedNote = $bindable(), editNote }: Props = $props()
-
-  let categories: NoteCategory[] = $state([])
-
-  onMount(async () => {
-    const db = await openDB()
-    const tx = db.transaction("categories")
-    const req = tx.objectStore("categories").getAll()
-
-    req.addEventListener("success", () => (categories = req.result))
-  })
+  const { categories, editedNote = $bindable(), editNote }: Props = $props()
 
   let isMobile = $state(false)
   window.addEventListener(
