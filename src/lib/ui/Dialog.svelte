@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { HTMLDialogAttributes } from "svelte/elements"
-  import { CircleX } from "lucide-svelte"
+  import CircleX from "lucide-svelte/icons/circle-x"
 
   interface Props extends HTMLDialogAttributes {
     isOpen: boolean
@@ -23,7 +23,7 @@
     "transition duration-300 ease-in-out",
     "mt-auto md:mx-auto md:my-auto",
     "rounded-lg shadow-lg backdrop:backdrop-blur-sm",
-    "max-w-6xl",
+    "w-full max-w-6xl",
   ]}
   inert={!isOpen}
 >

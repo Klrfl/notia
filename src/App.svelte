@@ -9,7 +9,13 @@
   import Button from "./lib/ui/Button.svelte"
   import Input from "./lib/ui/Input.svelte"
 
-  import { Info, Menu, Pencil, Plus, Save, Tag, X } from "lucide-svelte"
+  import Info from "lucide-svelte/icons/info"
+  import Menu from "lucide-svelte/icons/menu"
+  import Pencil from "lucide-svelte/icons/pencil"
+  import Plus from "lucide-svelte/icons/plus"
+  import Save from "lucide-svelte/icons/save"
+  import Tag from "lucide-svelte/icons/tag"
+  import X from "lucide-svelte/icons/x"
 
   import { onMount } from "svelte"
   import { openDB } from "./shared/db.svelte"

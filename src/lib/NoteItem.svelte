@@ -3,7 +3,8 @@
   import { fade } from "svelte/transition"
   import Button from "./ui/Button.svelte"
 
-  import { Pencil, Trash } from "lucide-svelte"
+  import Pencil from "lucide-svelte/icons/pencil"
+  import Trash from "lucide-svelte/icons/trash"
 
   import { marked } from "marked"
   import DOMPurify from "dompurify"

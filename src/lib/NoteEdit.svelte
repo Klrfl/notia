@@ -1,8 +1,11 @@
 <script lang="ts">
-  import { Pencil, Copy, Eye } from "lucide-svelte"
   import Button from "./ui/Button.svelte"
   import Input from "./ui/Input.svelte"
   import type { Note, NoteCategory } from "../types/"
+
+  import Pencil from "lucide-svelte/icons/pencil"
+  import Copy from "lucide-svelte/icons/copy"
+  import Eye from "lucide-svelte/icons/eye"
 
   import { marked } from "marked"
   import DOMPurify from "dompurify"

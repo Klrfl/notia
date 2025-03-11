@@ -2,8 +2,12 @@
   import type { NoteCategory } from "../types/"
   import Button from "../lib/ui/Button.svelte"
   import Input from "../lib/ui/Input.svelte"
-  import { Pencil, Plus, Tag, Trash } from "lucide-svelte"
   import Dialog from "./ui/Dialog.svelte"
+
+  import Pencil from "lucide-svelte/icons/pencil"
+  import Plus from "lucide-svelte/icons/plus"
+  import Tag from "lucide-svelte/icons/tag"
+  import Trash from "lucide-svelte/icons/trash"
 
   interface Props {
     showEditButton: boolean
