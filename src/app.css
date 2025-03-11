@@ -38,3 +38,8 @@ body {
 .preview ul {
   @apply ml-4 my-4;
 }
+
+.preview p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}

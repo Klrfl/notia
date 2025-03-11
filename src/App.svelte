@@ -9,7 +9,7 @@
   import Button from "./lib/ui/Button.svelte"
   import Input from "./lib/ui/Input.svelte"
 
-  import { Pencil, Plus, Save, Tag } from "lucide-svelte"
+  import { Info, Pencil, Plus, Save, Tag } from "lucide-svelte"
 
   import { onMount } from "svelte"
   import { openDB } from "./shared/db.svelte"
@@ -199,9 +199,11 @@
 
     selectedCategories.splice(selectedCategories.indexOf(id), 1)
   }
+
+  let isAboutOpen = $state(false)
 </script>
 
-<main class="main-grid">
+<main class="main-grid min-h-screen">
   <header
     class="header col-span-full px-8 py-4 bg-white border-b-2 border-b-gray-200"
   >
@@ -209,7 +211,7 @@
   </header>
 
   <nav
-    class="sidebar grid content-start bg-white border-r-2 border-r-gray-200 min-h-screen px-8 py-4"
+    class="sidebar flex flex-col gap-4 content-start bg-white border-r-2 border-r-gray-200 px-8 py-4"
   >
     <Button icon onclick={() => (isAddingNote = true)}>
       <Plus />
@@ -220,7 +222,7 @@
       <NoteForm noteAdded={handleAddNewNote} />
     </Dialog>
 
-    <menu class="contents">
+    <menu>
       {#each noteCategories as category (category.id)}
         <NoteCategoryItem
           {category}
@@ -268,6 +270,38 @@
         <Button type="submit">Submit</Button>
       </form>
     </Dialog>
+
+    <Button
+      variant="outline"
+      size="sm"
+      class="mt-auto text-gray-700"
+      icon
+      onclick={() => (isAboutOpen = true)}
+    >
+      <Info />
+      About Notia
+    </Button>
+
+    <Dialog bind:isOpen={isAboutOpen} heading="About notia">
+      <article class="preview">
+        <p>
+          Notia is a really light markdown-based notetaking app I made to learn
+          Svelte. It was an interesting experience to learn this framework!
+        </p>
+
+        <p>
+          This application stores all of its data locally in your browser, so
+          your notes never leave your device.
+        </p>
+
+        <p>If you enjoyed this app, please give it a star in Github. ⭐</p>
+        <a
+          href="https://github.com/klrfl/notia"
+          target="_blank"
+          class="text-blue-500 hover:text-blue-700 hover:underline">Notia</a
+        >
+      </article>
+    </Dialog>
   </nav>
 
   <section class="content p-8">
@@ -296,6 +330,7 @@
 <style>
   .main-grid {
     display: grid;
+    grid-auto-rows: max-content auto;
     grid-template-columns:
       [sidebar-start]
       max-content

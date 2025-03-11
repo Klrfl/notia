@@ -28,7 +28,7 @@
   inert={!isOpen}
 >
   <header class="pt-8 px-8 flex justify-between items-center">
-    <h2>{heading}</h2>
+    <h2 class="text-xl font-bold">{heading}</h2>
 
     <button
       onclick={() => (isOpen = false)}
