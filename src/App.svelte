@@ -9,7 +9,7 @@
   import Button from "./lib/ui/Button.svelte"
   import Input from "./lib/ui/Input.svelte"
 
-  import { Info, Pencil, Plus, Save, Tag } from "lucide-svelte"
+  import { Info, Menu, Pencil, Plus, Save, Tag, X } from "lucide-svelte"
 
   import { onMount } from "svelte"
   import { openDB } from "./shared/db.svelte"
@@ -205,13 +205,38 @@
 
 <main class="main-grid min-h-screen">
   <header
-    class="header col-span-full px-8 py-4 bg-white border-b-2 border-b-gray-200"
+    class="header col-span-full flex gap-4 items-center px-8 py-4 bg-white border-b-2 border-b-gray-200"
   >
     <h1 class="text-4xl text-slate-700">{title}</h1>
+
+    <div class="order-first">
+      <input
+        type="checkbox"
+        name="sidebar-toggle"
+        id="sidebar-toggle"
+        class="peer hidden"
+      />
+
+      <label
+        for="sidebar-toggle"
+        class="sidebar-toggle block peer-checked:hidden"
+      >
+        <Menu />
+        <div class="sr-only">Open sidebar</div>
+      </label>
+
+      <label
+        for="sidebar-toggle"
+        class="sidebar-toggle hidden peer-checked:block"
+      >
+        <X />
+        <div class="sr-only">Close sidebar</div>
+      </label>
+    </div>
   </header>
 
-  <nav
-    class="sidebar flex flex-col gap-4 content-start bg-white border-r-2 border-r-gray-200 px-8 py-4"
+  <menu
+    class="sidebar absolute shadow-lg md:shadow-none md:relative flex flex-col gap-4 content-start bg-white border-r-2 border-r-gray-200 px-8 py-4"
   >
     <Button icon onclick={() => (isAddingNote = true)}>
       <Plus />
@@ -222,7 +247,7 @@
       <NoteForm noteAdded={handleAddNewNote} />
     </Dialog>
 
-    <menu>
+    <menu class="flex flex-col">
       {#each noteCategories as category (category.id)}
         <NoteCategoryItem
           {category}
@@ -302,7 +327,7 @@
         >
       </article>
     </Dialog>
-  </nav>
+  </menu>
 
   <section class="content p-8">
     {#if !filteredNotes.length}
@@ -328,6 +353,8 @@
 </main>
 
 <style>
+  @reference "./app.css";
+
   .main-grid {
     display: grid;
     grid-auto-rows: max-content auto;
@@ -345,9 +372,36 @@
 
   .sidebar {
     grid-column: sidebar;
+
+    @media screen and (max-width: 768px) {
+      translate: -100% 9ch;
+      transition: translate 200ms ease;
+      left: 0;
+      right: 0;
+    }
   }
 
   .content {
     grid-column: content;
+  }
+
+  .sidebar-toggle {
+    @apply md:hidden p-4 cursor-pointer hover:bg-gray-200;
+  }
+
+  .main-grid:has(#sidebar-toggle:checked) .sidebar {
+    translate: 0 9ch;
+
+    @media screen and (min-width: 768px) {
+      translate: 0;
+    }
+  }
+
+  /* disable scroll when menu is open */
+  :global(body .main-grid:has(#sidebar-toggle:checked)) {
+    @media screen and (max-width: 768px) {
+      max-height: 100vh;
+      overflow: hidden;
+    }
   }
 </style>

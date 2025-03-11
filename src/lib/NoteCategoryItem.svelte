@@ -30,7 +30,7 @@
 </script>
 
 <li
-  class="hover:bg-gray-200/70 flex justify-between group max-w-[25ch] text-left"
+  class="hover:bg-gray-200/70 flex justify-between group md:max-w-[25ch] text-left"
 >
   <Button
     variant="none"
