@@ -9,7 +9,7 @@
   import Button from "./lib/ui/Button.svelte"
   import Input from "./lib/ui/Input.svelte"
 
-  import { Pencil, Plus, Tag } from "lucide-svelte"
+  import { Pencil, Plus, Save, Tag } from "lucide-svelte"
 
   import { onMount } from "svelte"
   import { openDB } from "./shared/db.svelte"
@@ -238,8 +238,13 @@
     </Button>
 
     <Button icon variant="outline" onclick={() => toggleEditCategory()}>
-      <Pencil />
-      Edit categories
+      {#if !isEditingCategory}
+        <Pencil />
+        Edit categories
+      {:else}
+        <Save />
+        Save categories
+      {/if}
     </Button>
 
     <Dialog bind:isOpen={isAddingCategory} heading="Add new category">

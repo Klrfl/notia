@@ -32,41 +32,35 @@
 <li
   class="hover:bg-gray-200/70 flex justify-between group max-w-[25ch] text-left"
 >
-  {#if !showEditButton}
-    <Button
-      variant="none"
-      icon
-      onclick={() => {
-        isCategoryInFilter = !isCategoryInFilter
-        toggleCategoryFilter(category.id)
-      }}
-      class={[
-        "w-full flex gap-2 justify-start",
-        isCategoryInFilter ? "bg-blue-500 text-white" : "text-gray-700 ",
-      ]}
-      size="sm"
-    >
-      <div>
-        <Tag />
-      </div>
-      <span class="whitespace-nowrap overflow-hidden overflow-ellipsis">
-        {category.name}
-      </span>
-    </Button>
-  {:else}
-    <Button
-      variant="none"
-      icon
-      onclick={() => (isEditing = true)}
-      class="w-full text-gray-700 flex gap-2 justify-start"
-      size="sm"
-    >
-      <div>
+  <Button
+    variant="none"
+    icon
+    onclick={() => {
+      if (showEditButton) {
+        return (isEditing = true)
+      }
+
+      isCategoryInFilter = !isCategoryInFilter
+      return toggleCategoryFilter(category.id)
+    }}
+    class={[
+      "w-full flex gap-2 justify-start",
+      isCategoryInFilter ? "bg-blue-500 text-white" : "text-gray-700",
+    ]}
+    size="sm"
+  >
+    <div>
+      {#if showEditButton}
         <Pencil />
-      </div>
+      {:else}
+        <Tag />
+      {/if}
+    </div>
+
+    <span class="whitespace-nowrap overflow-hidden overflow-ellipsis">
       {category.name}
-    </Button>
-  {/if}
+    </span>
+  </Button>
 
   <Dialog bind:isOpen={isEditing} heading="Edit category name">
     <form
@@ -91,13 +85,15 @@
     </form>
   </Dialog>
 
-  <Button
-    title="delete category"
-    size="sm"
-    variant="outline"
-    onclick={() => categoryDeleted(category.id)}
-    class="opacity-0 focus-visible:opacity-100 group-hover:opacity-100 transition-opacity"
-  >
-    <Trash />
-  </Button>
+  {#if showEditButton}
+    <Button
+      title="delete category"
+      size="sm"
+      variant="outline"
+      onclick={() => categoryDeleted(category.id)}
+      class="opacity-0 focus-visible:opacity-100 group-hover:opacity-100 transition-opacity"
+    >
+      <Trash />
+    </Button>
+  {/if}
 </li>
