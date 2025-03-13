@@ -165,10 +165,10 @@
     })
   }
 
-  let isEditingCategory = $state(false)
+  let isEditingCategories = $state(false)
 
-  const toggleEditCategory = () => {
-    isEditingCategory = !isEditingCategory
+  const toggleEditCategories = () => {
+    isEditingCategories = !isEditingCategories
   }
 
   const editCategory = (id: NoteCategory["id"], name: NoteCategory["name"]) => {
@@ -273,7 +273,7 @@
       {#each noteCategories as category (category.id)}
         <NoteCategoryItem
           {category}
-          showEditButton={isEditingCategory}
+          showEditButton={isEditingCategories}
           categoryEdited={editCategory}
           categoryDeleted={deleteCategory}
           toggleCategoryFilter={(id) => handleFilterByCategory(id)}
@@ -281,13 +281,15 @@
       {/each}
     </menu>
 
-    <Button icon variant="outline" onclick={() => (isAddingCategory = true)}>
-      <Tag />
-      Add new category
-    </Button>
+    {#if isEditingCategories}
+      <Button icon variant="outline" onclick={() => (isAddingCategory = true)}>
+        <Tag />
+        Add new category
+      </Button>
+    {/if}
 
-    <Button icon variant="outline" onclick={() => toggleEditCategory()}>
-      {#if !isEditingCategory}
+    <Button icon variant="outline" onclick={() => toggleEditCategories()}>
+      {#if !isEditingCategories}
         <Pencil />
         Edit categories
       {:else}
