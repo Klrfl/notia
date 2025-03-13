@@ -1,4 +1,4 @@
-import type { InsertableNote, Note } from "@/types"
+import type { InsertableNote, Note, NoteCategory } from "@/types"
 
 export class NoteService {
   db: IDBDatabase
@@ -71,6 +71,38 @@ export class NoteService {
         this.notes.splice(this.notes.indexOf(noteLocation), 1, newNote)
         return resolve(this.notes)
       })
+    })
+  }
+
+  deleteNoteCategories(categoryId: NoteCategory["id"]) {
+    return new Promise((resolve) => {
+      const notesTx = this.db?.transaction("notes", "readwrite")
+      const cursorReq = notesTx?.objectStore("notes")?.openCursor()
+
+      cursorReq?.addEventListener("success", () => {
+        const cursor = cursorReq.result
+        if (!cursor) return
+
+        const newNote = cursor.value as Note
+        newNote.categories = newNote.categories?.filter((c) => c !== categoryId)
+        const req = notesTx?.objectStore("notes").put(newNote)
+
+        // sync note state with db
+        req.addEventListener("success", () => {
+          const existingNote = this.notes.find((n) => n.id === newNote.id)
+          if (!existingNote) {
+            return console.error(
+              "error occured when syncing database and application state."
+            )
+          }
+
+          this.notes.splice(this.notes.indexOf(existingNote), 1, newNote)
+        })
+
+        cursor.continue()
+      })
+
+      return resolve(this.notes)
     })
   }
 

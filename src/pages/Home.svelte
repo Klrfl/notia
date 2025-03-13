@@ -15,30 +15,22 @@
   import Tag from "lucide-svelte/icons/tag"
 
   import { NoteService } from "@/shared/note.svelte"
+  import { CategoryService } from "@/shared/category.svelte"
   import { onMount } from "svelte"
   import { openDB } from "@/shared/db.svelte"
 
   let db: IDBDatabase | undefined = $state()
   let noteService: NoteService | undefined = $state()
+  let categoryService: CategoryService | undefined = $state()
 
   onMount(async () => {
     try {
       db = await openDB()
       noteService = new NoteService(db)
+      categoryService = new CategoryService(db)
+
       await noteService.getAllNotes()
-
-      const categoriesTx = db.transaction("categories")
-      const noteCategoriesReq = categoriesTx
-        .objectStore("categories")
-        .openCursor()
-
-      noteCategoriesReq.addEventListener("success", () => {
-        const cursor = noteCategoriesReq.result
-
-        if (!cursor) return
-        noteCategories.push(cursor.value)
-        cursor.continue()
-      })
+      await categoryService.getAllCategories()
     } catch (error) {
       return console.error(error)
     }
@@ -57,8 +49,6 @@
           )
         })
   )
-
-  let noteCategories = $state<NoteCategory[]>([])
 
   let isAddingNote = $state(false)
 
@@ -103,22 +93,10 @@
   let isAddingCategory = $state(false)
   let newCategory = $state("")
 
-  const addNewCategory = (name: string) => {
+  const addNewCategory = async (name: string) => {
     isAddingCategory = false
 
-    const categoryStore = db
-      ?.transaction("categories", "readwrite")
-      .objectStore("categories")
-
-    const req = categoryStore?.add({ name })
-
-    req?.addEventListener("success", () => {
-      const returnReq = categoryStore?.get(req.result)
-
-      returnReq?.addEventListener("success", () => {
-        noteCategories.push(returnReq.result)
-      })
-    })
+    await categoryService?.addCategory(name)
   }
 
   let isEditingCategories = $state(false)
@@ -127,46 +105,18 @@
     isEditingCategories = !isEditingCategories
   }
 
-  const editCategory = (id: NoteCategory["id"], name: NoteCategory["name"]) => {
+  const editCategory = async (
+    id: NoteCategory["id"],
+    name: NoteCategory["name"]
+  ) => {
     const newCategory = { id, name }
-
-    const tx = db?.transaction("categories", "readwrite")
-    const req = tx?.objectStore("categories").put(newCategory)
-
-    req?.addEventListener("success", () => {
-      noteCategories.splice(noteCategories.indexOf(newCategory), 1, newCategory)
-      console.log("successfully edited category")
-    })
+    await categoryService?.editCategory(newCategory)
   }
 
-  const deleteCategory = (categoryId: number) => {
+  const deleteCategory = async (categoryId: number) => {
     if (!window.confirm("are you sure?")) return
-
-    const categoryStore = db
-      ?.transaction("categories", "readwrite")
-      .objectStore("categories")
-    const req = categoryStore?.delete(categoryId)
-
-    req?.addEventListener("success", () => {
-      console.log("successfully deleted category.")
-    })
-
-    noteCategories = noteCategories.filter(({ id }) => id !== categoryId)
-
-    // delete target category id on notes
-    const notesTx = db?.transaction("notes", "readwrite")
-    const cursorReq = notesTx?.objectStore("notes")?.openCursor()
-
-    cursorReq?.addEventListener("success", () => {
-      const cursor = cursorReq.result
-      if (!cursor) return
-
-      const newNote = cursor.value as Note
-      newNote.categories = newNote.categories?.filter((c) => c !== categoryId)
-      notesTx?.objectStore("notes").put(newNote)
-
-      cursor.continue()
-    })
+    await categoryService?.deleteCategory(categoryId)
+    await noteService?.deleteNoteCategories(categoryId)
   }
 
   const handleFilterByCategory = (targetId: number) => {
@@ -193,15 +143,17 @@
     </Dialog>
 
     <menu class="flex flex-col">
-      {#each noteCategories as category (category.id)}
-        <NoteCategoryItem
-          {category}
-          showEditButton={isEditingCategories}
-          categoryEdited={editCategory}
-          categoryDeleted={deleteCategory}
-          toggleCategoryFilter={(id) => handleFilterByCategory(id)}
-        />
-      {/each}
+      {#if categoryService?.categories}
+        {#each categoryService.categories as category (category.id)}
+          <NoteCategoryItem
+            {category}
+            showEditButton={isEditingCategories}
+            categoryEdited={editCategory}
+            categoryDeleted={deleteCategory}
+            toggleCategoryFilter={(id) => handleFilterByCategory(id)}
+          />
+        {/each}
+      {/if}
     </menu>
 
     {#if isEditingCategories}
@@ -262,10 +214,10 @@
   </section>
 
   <Dialog bind:isOpen={isEditingNote} heading="Edit note">
-    {#if editedNote}
+    {#if editedNote && categoryService}
       <NoteEdit
         bind:editedNote
-        categories={noteCategories}
+        categories={categoryService.categories}
         editNote={handleEditNote}
       />
     {/if}
