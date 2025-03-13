@@ -14,17 +14,41 @@
   import Save from "lucide-svelte/icons/save"
   import Tag from "lucide-svelte/icons/tag"
 
+  import { NoteService } from "@/shared/note.svelte"
   import { onMount } from "svelte"
   import { openDB } from "@/shared/db.svelte"
 
-  let db = $state<IDBDatabase>()
-  let notes = $state<Note[]>([])
+  let db: IDBDatabase | undefined = $state()
+  let noteService: NoteService | undefined = $state()
+
+  onMount(async () => {
+    try {
+      db = await openDB()
+      noteService = new NoteService(db)
+      await noteService.getAllNotes()
+
+      const categoriesTx = db.transaction("categories")
+      const noteCategoriesReq = categoriesTx
+        .objectStore("categories")
+        .openCursor()
+
+      noteCategoriesReq.addEventListener("success", () => {
+        const cursor = noteCategoriesReq.result
+
+        if (!cursor) return
+        noteCategories.push(cursor.value)
+        cursor.continue()
+      })
+    } catch (error) {
+      return console.error(error)
+    }
+  })
 
   let selectedCategories: number[] = $state([])
   let filteredNotes = $derived(
     !selectedCategories.length
-      ? notes
-      : notes.filter((note) => {
+      ? noteService?.notes
+      : noteService?.notes.filter((note) => {
           return (
             note.categories &&
             note.categories?.some((category) =>
@@ -36,65 +60,17 @@
 
   let noteCategories = $state<NoteCategory[]>([])
 
-  const initialize = (db: IDBDatabase) => {
-    const notesTx = db.transaction("notes")
-    const notesReq = notesTx.objectStore("notes").getAll()
-
-    notesReq.addEventListener("success", () => {
-      notes = notesReq.result
-    })
-
-    const categoriesTx = db.transaction("categories")
-    const noteCategoriesReq = categoriesTx
-      .objectStore("categories")
-      .openCursor()
-
-    noteCategoriesReq.addEventListener("success", () => {
-      const cursor = noteCategoriesReq.result
-
-      if (!cursor) return
-      noteCategories.push(cursor.value)
-      cursor.continue()
-    })
-  }
-
-  onMount(async () => {
-    try {
-      db = await openDB()
-      initialize(db)
-    } catch (error) {
-      return console.error(error)
-    }
-  })
-
   let isAddingNote = $state(false)
 
-  const handleAddNewNote = (note: InsertableNote) => {
+  const handleAddNewNote = async (note: InsertableNote) => {
     isAddingNote = false
-    const notesStore = db
-      ?.transaction("notes", "readwrite")
-      .objectStore("notes")
 
-    const newNote = {
-      ...note,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    const newNoteReq = notesStore?.add(structuredClone(newNote))
-
-    newNoteReq?.addEventListener("success", () => {
-      const returnNewNote = notesStore?.get(newNoteReq.result)
-
-      returnNewNote?.addEventListener("success", () =>
-        notes.push(returnNewNote.result)
-      )
-    })
-
-    newNoteReq?.addEventListener("error", () => {
+    try {
+      await noteService?.addNewNote(note)
+    } catch (error) {
+      console.error(error)
       alert("there was an error adding a new note.")
-      console.error(newNoteReq.error)
-    })
+    }
   }
 
   let editedNote = $state<Note>()
@@ -105,38 +81,23 @@
     isEditingNote = true
   }
 
-  const handleEditNote = (editedNote: Note) => {
-    const notesStore = db
-      ?.transaction("notes", "readwrite")
-      .objectStore("notes")
-
-    const newNote: Note = {
-      ...editedNote,
-      updatedAt: new Date(),
-    }
-
-    const request = notesStore?.put(structuredClone(newNote))
-
-    request?.addEventListener("success", () => {
-      const noteLocation = notes.find(({ id }) => id === editedNote.id)
-      if (!noteLocation) return alert("can't edit your note for some reason.")
-
-      notes.splice(notes.indexOf(noteLocation), 1, newNote)
-
+  const handleEditNote = async (editedNote: Note) => {
+    try {
+      await noteService?.editNote(editedNote)
+    } catch (error) {
+      console.error(error)
+      alert("there was an error editing your note.")
+    } finally {
       isEditingNote = false
-    })
+    }
   }
 
-  const handleDeleteNote = (noteId: Note["id"]) => {
+  const handleDeleteNote = async (noteId: Note["id"]) => {
     if (!window.confirm("Are you sure you want to delete this note?")) {
       return
     }
 
-    const notesStore = db?.transaction("notes", "readwrite")
-    const notesObjectStore = notesStore?.objectStore("notes")
-    notesObjectStore?.delete(noteId)
-
-    notes = notes.filter((note) => note.id !== noteId)
+    await noteService?.deleteNote(noteId)
   }
 
   let isAddingCategory = $state(false)
@@ -285,7 +246,7 @@
   </menu>
 
   <section class="content p-8">
-    {#if !filteredNotes.length}
+    {#if !filteredNotes?.length}
       <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
     {:else}
       <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
