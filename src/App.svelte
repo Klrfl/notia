@@ -185,6 +185,7 @@
 
   const deleteCategory = (categoryId: number) => {
     if (!window.confirm("are you sure?")) return
+
     const categoryStore = db
       ?.transaction("categories", "readwrite")
       .objectStore("categories")
@@ -195,6 +196,21 @@
     })
 
     noteCategories = noteCategories.filter(({ id }) => id !== categoryId)
+
+    // delete target category id on notes
+    const notesTx = db?.transaction("notes", "readwrite")
+    const cursorReq = notesTx?.objectStore("notes")?.openCursor()
+
+    cursorReq?.addEventListener("success", () => {
+      const cursor = cursorReq.result
+      if (!cursor) return
+
+      const newNote = cursor.value as Note
+      newNote.categories = newNote.categories?.filter((c) => c !== categoryId)
+      notesTx?.objectStore("notes").put(newNote)
+
+      cursor.continue()
+    })
   }
 
   const handleFilterByCategory = (targetId: number) => {
