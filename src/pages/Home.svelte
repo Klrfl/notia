@@ -9,7 +9,6 @@
   import Button from "@/lib/ui/Button.svelte"
   import Input from "@/lib/ui/Input.svelte"
 
-  import Info from "lucide-svelte/icons/info"
   import Pencil from "lucide-svelte/icons/pencil"
   import Plus from "lucide-svelte/icons/plus"
   import Save from "lucide-svelte/icons/save"
@@ -217,8 +216,6 @@
 
     selectedCategories.splice(selectedCategories.indexOf(id), 1)
   }
-
-  let isAboutOpen = $state(false)
 </script>
 
 <main class="main-grid">
@@ -284,38 +281,6 @@
         />
         <Button type="submit">Submit</Button>
       </form>
-    </Dialog>
-
-    <Button
-      variant="outline"
-      size="sm"
-      class="mt-auto text-gray-700"
-      icon
-      onclick={() => (isAboutOpen = true)}
-    >
-      <Info />
-      About Notia
-    </Button>
-
-    <Dialog bind:isOpen={isAboutOpen} heading="About notia">
-      <article class="preview">
-        <p>
-          Notia is a really light markdown-based notetaking app I made to learn
-          Svelte. It was an interesting experience to learn this framework!
-        </p>
-
-        <p>
-          This application stores all of its data locally in your browser, so
-          your notes never leave your device.
-        </p>
-
-        <p>If you enjoyed this app, please give it a star in Github. ⭐</p>
-        <a
-          href="https://github.com/klrfl/notia"
-          target="_blank"
-          class="text-blue-500 hover:text-blue-700 hover:underline">Notia</a
-        >
-      </article>
     </Dialog>
   </menu>
 
