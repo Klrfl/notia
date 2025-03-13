@@ -60,6 +60,9 @@ importers:
       svelte-check:
         specifier: ^4.1.4
         version: 4.1.4(svelte@5.20.5)(typescript@5.7.3)
+      svelte-routing:
+        specifier: ^2.13.0
+        version: 2.13.0
       typescript:
         specifier: ~5.7.2
         version: 5.7.3
@@ -1185,6 +1188,9 @@ packages:
       svelte:
         optional: true
 
+  svelte-routing@2.13.0:
+    resolution: {integrity: sha512-/NTxqTwLc7Dq306hARJrH2HLXOBtKd7hu8nxgoFDlK0AC4SOKnzisiX/9m8Uksei1QAWtlAEdF91YphNM8iDMg==}
+
   svelte-toolbelt@0.7.1:
     resolution: {integrity: sha512-HcBOcR17Vx9bjaOceUvxkY3nGmbBmCBBbuWLLEWO6jtmWH8f/QoWmbyUfQZrpDINH39en1b8mptfPQT9VKQ1xQ==}
     engines: {node: '>=18', pnpm: '>=8.7.0'}
@@ -2305,6 +2311,8 @@ snapshots:
       postcss-selector-parser: 7.1.0
     optionalDependencies:
       svelte: 5.20.5
+
+  svelte-routing@2.13.0: {}
 
   svelte-toolbelt@0.7.1(svelte@5.20.5):
     dependencies:
