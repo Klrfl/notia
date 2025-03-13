@@ -227,7 +227,7 @@
 
 <main class="main-grid min-h-screen">
   <header
-    class="header col-span-full flex gap-4 items-center px-8 py-4 bg-white border-b-2 border-b-gray-200"
+    class="header col-span-full flex gap-4 items-center px-8 py-4 bg-white border-b border-b-gray-200"
   >
     <h1 class="text-4xl text-slate-700">{title}</h1>
 
@@ -258,7 +258,7 @@
   </header>
 
   <menu
-    class="sidebar absolute shadow-lg md:shadow-none md:relative flex flex-col gap-4 content-start bg-white border-r-2 border-r-gray-200 px-8 py-4"
+    class="sidebar absolute shadow-lg md:shadow-none md:relative flex flex-col gap-4 content-start bg-white border-r border-r-gray-200 px-8 py-4"
   >
     <Button icon onclick={() => (isAddingNote = true)}>
       <Plus />
