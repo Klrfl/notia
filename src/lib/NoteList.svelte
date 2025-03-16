@@ -2,7 +2,6 @@
   import type { Note, NoteCategory } from "@/types/"
   import { onMount } from "svelte"
   import { fly } from "svelte/transition"
-  import { SvelteSet } from "svelte/reactivity"
 
   import Button from "./ui/Button.svelte"
   import Dialog from "./ui/Dialog.svelte"
@@ -13,6 +12,7 @@
   import { openDB } from "@/shared/db.svelte"
 
   import { Ellipsis, X } from "lucide-svelte"
+  import { Popover } from "bits-ui"
 
   interface Props {
     notes: Note[]
@@ -61,14 +61,16 @@
     await noteService?.deleteNote(noteId)
   }
 
-  const selectedNotes: Set<Note["id"]> = new SvelteSet()
+  let selectedNotes: Array<Note["id"]> = $state([])
 
-  const handleSelectNote = (id: Note["id"]) => {
-    if (!selectedNotes.has(id)) {
-      selectedNotes.add(id)
-    } else {
-      selectedNotes.delete(id)
-    }
+  let selectedCategories: Array<NoteCategory["id"]> = $state([])
+  let isSelectingCategories = $state(false)
+
+  const handleCategorizeNotes = async () => {
+    await noteService?.categorizeNotes(selectedNotes, selectedCategories)
+
+    isSelectingCategories = false
+    selectedNotes = []
   }
 </script>
 
@@ -76,26 +78,91 @@
   {#if !notes?.length}
     <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
   {:else}
-    {#if selectedNotes.size}
-      <div
+    {#if selectedNotes.length}
+      <header
         class="flex justify-between items-center py-4 px-8 bg-white rounded-lg"
         transition:fly
       >
-        <Button size="sm" variant="outline">
+        <Button
+          size="sm"
+          variant="outline"
+          onclick={() => (selectedNotes = [])}
+        >
           <span class="sr-only">Cancel selection</span>
           <X size="1rem" color="red" />
         </Button>
         <p>
-          selected {selectedNotes.size} note{selectedNotes.size !== 1
+          selected {selectedNotes.length} note{selectedNotes.length !== 1
             ? "s"
             : ""}.
         </p>
 
-        <button class="flex">
-          <span class="sr-only">Actions</span>
-          <Ellipsis />
-        </button>
-      </div>
+        <Popover.Root>
+          <Popover.Trigger>
+            {#snippet child({ props })}
+              <Button
+                {...props}
+                class="flex hover:bg-gray-200/50"
+                variant="none"
+                size="sm"
+              >
+                <span class="sr-only">Actions</span>
+                <Ellipsis />
+              </Button>
+            {/snippet}
+          </Popover.Trigger>
+
+          <Popover.Portal>
+            <Popover.Content
+              class="flex flex-col gap-4 bg-white/80 p-4 rounded-lg shadow-lg right-0"
+              sideOffset={8}
+            >
+              <Button
+                variant="primary"
+                size="sm"
+                onclick={() => (isSelectingCategories = true)}
+              >
+                Add category
+              </Button>
+              <Button variant="danger" size="sm">Delete</Button>
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
+
+        <Dialog
+          bind:isOpen={isSelectingCategories}
+          heading="Select categories to add"
+        >
+          <form
+            onsubmit={(e) => {
+              e.preventDefault()
+              handleCategorizeNotes()
+            }}
+            class="grid gap-4"
+          >
+            {#each categories as category (category.id)}
+              <label
+                for={`${category.id}-${category.name}`}
+                class="flex gap-4 cursor-pointer"
+              >
+                {category.name}
+                <input
+                  type="checkbox"
+                  name="category"
+                  id={`${category.id}-${category.name}`}
+                  class="order-first"
+                  value={category.id}
+                  bind:group={selectedCategories}
+                />
+              </label>
+            {/each}
+
+            <Button onclick={() => handleCategorizeNotes} size="sm">
+              Add categories
+            </Button>
+          </form>
+        </Dialog>
+      </header>
     {/if}
 
     <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
