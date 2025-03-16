@@ -1,8 +1,6 @@
 <script lang="ts">
-  import type { Note, InsertableNote, NoteCategory } from "@/types/"
-  import NoteItem from "@/lib/NoteItem.svelte"
+  import type { InsertableNote, NoteCategory } from "@/types/"
   import NoteForm from "@/lib/NoteForm.svelte"
-  import NoteEdit from "@/lib/NoteEdit.svelte"
   import NoteCategoryItem from "@/lib/NoteCategoryItem.svelte"
 
   import Dialog from "@/lib/ui/Dialog.svelte"
@@ -14,10 +12,11 @@
   import Save from "lucide-svelte/icons/save"
   import Tag from "lucide-svelte/icons/tag"
 
+  import { onMount } from "svelte"
   import { NoteService } from "@/shared/note.svelte"
   import { CategoryService } from "@/shared/category.svelte"
-  import { onMount } from "svelte"
   import { openDB } from "@/shared/db.svelte"
+  import NoteList from "@/lib/NoteList.svelte"
 
   let db: IDBDatabase | undefined = $state()
   let noteService: NoteService | undefined = $state()
@@ -62,34 +61,6 @@
       alert("there was an error adding a new note.")
     }
   }
-
-  let editedNote = $state<Note>()
-  let isEditingNote = $state(false)
-
-  const initiateEditNote = (note: Note) => {
-    editedNote = note
-    isEditingNote = true
-  }
-
-  const handleEditNote = async (editedNote: Note) => {
-    try {
-      await noteService?.editNote(editedNote)
-    } catch (error) {
-      console.error(error)
-      alert("there was an error editing your note.")
-    } finally {
-      isEditingNote = false
-    }
-  }
-
-  const handleDeleteNote = async (noteId: Note["id"]) => {
-    if (!window.confirm("Are you sure you want to delete this note?")) {
-      return
-    }
-
-    await noteService?.deleteNote(noteId)
-  }
-
   let isAddingCategory = $state(false)
   let newCategory = $state("")
 
@@ -100,10 +71,6 @@
   }
 
   let isEditingCategories = $state(false)
-
-  const toggleEditCategories = () => {
-    isEditingCategories = !isEditingCategories
-  }
 
   const editCategory = async (
     id: NoteCategory["id"],
@@ -119,6 +86,7 @@
     await noteService?.deleteNoteCategories(categoryId)
   }
 
+  // TODO: move to NoteList.svelte
   const handleFilterByCategory = (targetId: number) => {
     const id = selectedCategories.find((id) => id === targetId)
     if (!id) {
@@ -163,7 +131,11 @@
       </Button>
     {/if}
 
-    <Button icon variant="outline" onclick={() => toggleEditCategories()}>
+    <Button
+      icon
+      variant="outline"
+      onclick={() => (isEditingCategories = !isEditingCategories)}
+    >
       {#if !isEditingCategories}
         <Pencil />
         Edit categories
@@ -197,31 +169,12 @@
     </Dialog>
   </menu>
 
-  <section class="content p-8">
-    {#if !filteredNotes?.length}
-      <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
-    {:else}
-      <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
-        {#each filteredNotes as note (note.id)}
-          <NoteItem
-            {note}
-            editNote={initiateEditNote}
-            deleteNote={handleDeleteNote}
-          />
-        {/each}
-      </ul>
-    {/if}
-  </section>
-
-  <Dialog bind:isOpen={isEditingNote} heading="Edit note">
-    {#if editedNote && categoryService}
-      <NoteEdit
-        bind:editedNote
-        categories={categoryService.categories}
-        editNote={handleEditNote}
-      />
-    {/if}
-  </Dialog>
+  {#if noteService?.notes && categoryService?.categories}
+    <NoteList
+      notes={noteService.notes}
+      categories={categoryService.categories}
+    />
+  {/if}
 </main>
 
 <style>
@@ -238,10 +191,6 @@
       [content-end];
   }
 
-  .header {
-    grid-column: 1/-1;
-  }
-
   .sidebar {
     grid-column: sidebar;
 
@@ -251,10 +200,6 @@
       left: 0;
       right: 0;
     }
-  }
-
-  .content {
-    grid-column: content;
   }
 
   :global(body:has(#sidebar-toggle:checked) .sidebar) {
