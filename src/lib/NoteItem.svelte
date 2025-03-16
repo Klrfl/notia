@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Note } from "../types/"
-  import { fade } from "svelte/transition"
+  import { fly } from "svelte/transition"
   import Button from "./ui/Button.svelte"
 
   import Pencil from "lucide-svelte/icons/pencil"
@@ -20,7 +20,7 @@
 
 <li
   class="bg-white outline outline-gray-200 flex flex-col gap-4 p-8 rounded-lg"
-  transition:fade
+  transition:fly
 >
   <h2 class="text-xl">{note.title}</h2>
 
@@ -48,9 +48,10 @@
       icon
       onclick={() => editNote(note)}
       size="sm"
-      class="@max-2xs:col-span-full"
+      variant="none"
+      class="@max-2xs:col-span-full text-blue-500 bg-blue-500/10 hover:bg-blue-500/20"
     >
-      <Pencil size="1rem" class="text-gray-100" />
+      <Pencil size="1rem" />
       Edit note
     </Button>
 
