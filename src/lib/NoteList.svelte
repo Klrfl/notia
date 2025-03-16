@@ -65,6 +65,7 @@
 
   let selectedCategories: Array<NoteCategory["id"]> = $state([])
   let isSelectingCategories = $state(false)
+  let isPopoverOpen = $state(false)
 
   const handleCategorizeNotes = async () => {
     await noteService?.categorizeNotes(selectedNotes, selectedCategories)
@@ -97,7 +98,7 @@
             : ""}.
         </p>
 
-        <Popover.Root>
+        <Popover.Root bind:open={isPopoverOpen}>
           <Popover.Trigger>
             {#snippet child({ props })}
               <Button
@@ -105,6 +106,7 @@
                 class="flex hover:bg-gray-200/50"
                 variant="none"
                 size="sm"
+                onclick={() => (isPopoverOpen = true)}
               >
                 <span class="sr-only">Actions</span>
                 <Ellipsis />
@@ -120,7 +122,10 @@
               <Button
                 variant="primary"
                 size="sm"
-                onclick={() => (isSelectingCategories = true)}
+                onclick={() => {
+                  isSelectingCategories = true
+                  isPopoverOpen = false
+                }}
               >
                 Add category
               </Button>
