@@ -18,5 +18,6 @@
       [sidebar-end content-start]
       repeat(10, 1fr)
       [content-end];
+    flex-grow: 1;
   }
 </style>

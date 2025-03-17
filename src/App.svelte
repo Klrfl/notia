@@ -1,13 +1,13 @@
 <script lang="ts">
   import { Router, Route } from "svelte-routing"
   import Home from "./pages/Home.svelte"
-  import Navbar from '@/lib/Navbar.svelte'
+  import Navbar from "@/lib/Navbar.svelte"
 
-  const { url = '' } = $props()
+  const { url = "" } = $props()
 </script>
 
 <Router {url}>
-  <Navbar/>
+  <Navbar />
 
   <Route path="/">
     <Home />
@@ -15,14 +15,9 @@
 </Router>
 
 <style>
-:global(#app) {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* container for routes*/
-:global(.main-grid) {
-  flex-grow: 1;
-}
+  :global(#app) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
 </style>
