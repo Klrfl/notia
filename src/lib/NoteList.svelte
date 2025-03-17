@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Note, NoteCategory } from "@/types/"
-  import { onMount } from "svelte"
   import { fly } from "svelte/transition"
 
   import Button from "./ui/Button.svelte"
@@ -8,31 +7,13 @@
   import NoteItem from "./NoteItem.svelte"
   import NoteEdit from "./NoteEdit.svelte"
 
-  import { NoteService } from "@/shared/note.svelte"
-  import { openDB } from "@/shared/db.svelte"
+  import { noteService } from "@/shared/note.svelte"
+  import { categoryService } from "@/shared/category.svelte"
 
   import { Ellipsis, X } from "lucide-svelte"
   import { Popover } from "bits-ui"
 
-  interface Props {
-    notes: Note[]
-    categories: NoteCategory[]
-  }
-  const { notes, categories }: Props = $props()
-
-  let db: IDBDatabase | undefined = $state()
-  let noteService: NoteService | undefined = $state()
-
-  onMount(async () => {
-    try {
-      db = await openDB()
-      noteService = new NoteService(db)
-
-      await noteService.getAllNotes()
-    } catch (error) {
-      return console.error(error)
-    }
-  })
+  const categories = categoryService.getAllCategories()
 
   let editedNote = $state<Note>()
   let isEditingNote = $state(false)
@@ -76,7 +57,7 @@
 </script>
 
 <section class="content p-8 flex flex-col gap-4">
-  {#if !notes?.length}
+  {#if !noteService.getAllNotes().length}
     <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
   {:else}
     {#if selectedNotes.length}
@@ -171,7 +152,7 @@
     {/if}
 
     <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
-      {#each notes as note (note.id)}
+      {#each noteService.getAllNotes() as note (note.id)}
         <li
           class={[
             "flex flex-col gap-4 p-8 group relative",
@@ -208,8 +189,12 @@
 </section>
 
 <Dialog bind:isOpen={isEditingNote} heading="Edit note">
-  {#if editedNote && categories}
-    <NoteEdit bind:editedNote {categories} editNote={handleEditNote} />
+  {#if editedNote}
+    <NoteEdit
+      bind:editedNote
+      categories={categoryService.getAllCategories()}
+      editNote={handleEditNote}
+    />
   {/if}
 </Dialog>
 

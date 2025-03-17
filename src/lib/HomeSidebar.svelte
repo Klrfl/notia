@@ -26,9 +26,6 @@
       db = await openDB()
       noteService = new NoteService(db)
       categoryService = new CategoryService(db)
-
-      await noteService.getAllNotes()
-      await categoryService.getAllCategories()
     } catch (error) {
       return console.error(error)
     }
@@ -106,7 +103,12 @@
   </Button>
 
   <Dialog bind:isOpen={isAddingNote} heading="Add new note">
-    <NoteForm noteAdded={handleAddNewNote} />
+    {#if categoryService}
+      <NoteForm
+        noteAdded={handleAddNewNote}
+        categories={categoryService.getAllCategories()}
+      />
+    {/if}
   </Dialog>
 
   <menu class="flex flex-col">

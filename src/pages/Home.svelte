@@ -1,33 +1,11 @@
 <script lang="ts">
-  import { onMount } from "svelte"
-  import { CategoryService } from "@/shared/category.svelte"
-  import { openDB } from "@/shared/db.svelte"
   import NoteList from "@/lib/NoteList.svelte"
   import HomeSidebar from "@/lib/HomeSidebar.svelte"
-
-  let db: IDBDatabase | undefined = $state()
-  let categoryService: CategoryService | undefined = $state()
-
-  onMount(async () => {
-    try {
-      db = await openDB()
-      categoryService = new CategoryService(db)
-
-      await categoryService.getAllCategories()
-    } catch (error) {
-      return console.error(error)
-    }
-  })
 </script>
 
 <main class="main-grid">
   <HomeSidebar />
-
-  {#if categoryService}
-    {#await categoryService.getAllCategories() then categories}
-      <NoteList {categories} />
-    {/await}
-  {/if}
+  <NoteList />
 </main>
 
 <style>
