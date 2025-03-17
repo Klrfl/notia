@@ -10,7 +10,8 @@
   import { noteService } from "@/shared/note.svelte"
   import { categoryService } from "@/shared/category.svelte"
 
-  import { Ellipsis, X } from "lucide-svelte"
+  import Ellipsis from "lucide-svelte/icons/ellipsis"
+  import X from "lucide-svelte/icons/x"
   import { Popover } from "bits-ui"
   import { onMount } from "svelte"
 
