@@ -163,3 +163,20 @@ export class NoteService {
 
 const db = await openDB()
 export const noteService = new NoteService(db)
+
+export const selectedCategories: number[] = $state([])
+
+const filteredNotes = $derived(
+  !selectedCategories.length
+    ? noteService?.getAllNotes()
+    : noteService?.getAllNotes().filter((note) => {
+        return (
+          note.categories &&
+          note.categories?.some((category) =>
+            selectedCategories.includes(category)
+          )
+        )
+      })
+)
+
+export const getFilteredNotes = () => filteredNotes

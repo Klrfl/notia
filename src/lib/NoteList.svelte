@@ -7,7 +7,7 @@
   import NoteItem from "./NoteItem.svelte"
   import NoteEdit from "./NoteEdit.svelte"
 
-  import { noteService } from "@/shared/note.svelte"
+  import { getFilteredNotes, noteService } from "@/shared/note.svelte"
   import { categoryService } from "@/shared/category.svelte"
 
   import { Ellipsis, X } from "lucide-svelte"
@@ -57,7 +57,7 @@
 </script>
 
 <section class="content p-8 flex flex-col gap-4">
-  {#if !noteService.getAllNotes().length}
+  {#if !getFilteredNotes().length}
     <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
   {:else}
     {#if selectedNotes.length}

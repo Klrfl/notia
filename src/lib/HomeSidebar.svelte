@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { openDB } from "@/shared/db.svelte"
-  import { NoteService } from "@/shared/note.svelte"
-  import { CategoryService } from "@/shared/category.svelte"
+  import { noteService, selectedCategories } from "@/shared/note.svelte"
+  import { categoryService } from "@/shared/category.svelte"
 
-  import { onMount } from "svelte"
   import type { InsertableNote, NoteCategory } from "@/types"
   import Button from "./ui/Button.svelte"
   import Dialog from "./ui/Dialog.svelte"
@@ -17,20 +15,6 @@
   import NoteForm from "./NoteForm.svelte"
   import Input from "./ui/Input.svelte"
 
-  let db: IDBDatabase | undefined = $state()
-  let noteService: NoteService | undefined = $state()
-  let categoryService: CategoryService | undefined = $state()
-
-  onMount(async () => {
-    try {
-      db = await openDB()
-      noteService = new NoteService(db)
-      categoryService = new CategoryService(db)
-    } catch (error) {
-      return console.error(error)
-    }
-  })
-
   const handleAddNewNote = async (note: InsertableNote) => {
     isAddingNote = false
 
@@ -43,20 +27,6 @@
   }
 
   let isAddingNote = $state(false)
-
-  let selectedCategories: number[] = $state([])
-  let filteredNotes = $derived(
-    !selectedCategories.length
-      ? noteService?.notes
-      : noteService?.notes.filter((note) => {
-          return (
-            note.categories &&
-            note.categories?.some((category) =>
-              selectedCategories.includes(category)
-            )
-          )
-        })
-  )
 
   let isAddingCategory = $state(false)
   let newCategory = $state("")
