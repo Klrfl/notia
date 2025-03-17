@@ -1,5 +1,5 @@
 import type { NoteCategory } from "@/types"
-import { openDB } from "./db.svelte"
+import { db as database } from "./db.svelte"
 
 export class CategoryService {
   db: IDBDatabase
@@ -42,7 +42,7 @@ export class CategoryService {
   }
 
   editCategory(newCategory: NoteCategory) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const tx = this.db?.transaction("categories", "readwrite")
       const req = tx?.objectStore("categories").put(newCategory)
 
@@ -73,5 +73,4 @@ export class CategoryService {
   }
 }
 
-const db = await openDB()
-export const categoryService = new CategoryService(db)
+export const categoryService = new CategoryService(database)

@@ -1,9 +1,24 @@
 import type { InsertableNote, Note, NoteCategory } from "@/types"
-import { openDB } from "./db.svelte"
+import { db as database } from "./db.svelte"
 
 export class NoteService {
-  db: IDBDatabase
+  readonly db: IDBDatabase
+
   notes: Note[] = $state([])
+  selectedCategories: number[] = $state([])
+
+  readonly filteredNotes = $derived(
+    !this.selectedCategories.length
+      ? this.notes
+      : this.notes.filter((note) => {
+          return (
+            note.categories &&
+            note.categories?.some((category) =>
+              this.selectedCategories.includes(category)
+            )
+          )
+        })
+  )
 
   constructor(db: IDBDatabase) {
     this.db = db
@@ -161,22 +176,4 @@ export class NoteService {
   }
 }
 
-const db = await openDB()
-export const noteService = new NoteService(db)
-
-export const selectedCategories: number[] = $state([])
-
-const filteredNotes = $derived(
-  !selectedCategories.length
-    ? noteService?.getAllNotes()
-    : noteService?.getAllNotes().filter((note) => {
-        return (
-          note.categories &&
-          note.categories?.some((category) =>
-            selectedCategories.includes(category)
-          )
-        )
-      })
-)
-
-export const getFilteredNotes = () => filteredNotes
+export const noteService = new NoteService(database)

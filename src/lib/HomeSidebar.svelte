@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { noteService, selectedCategories } from "@/shared/note.svelte"
+  import { noteService } from "@/shared/note.svelte"
   import { categoryService } from "@/shared/category.svelte"
 
   import type { InsertableNote, NoteCategory } from "@/types"
@@ -14,6 +14,9 @@
   import NoteCategoryItem from "./NoteCategoryItem.svelte"
   import NoteForm from "./NoteForm.svelte"
   import Input from "./ui/Input.svelte"
+  import { onMount } from "svelte"
+
+  onMount(() => categoryService.getAllCategories())
 
   const handleAddNewNote = async (note: InsertableNote) => {
     isAddingNote = false
@@ -55,12 +58,15 @@
 
   // TODO: somehow share state with NoteList.svelte
   const handleFilterByCategory = (targetId: number) => {
-    const id = selectedCategories.find((id) => id === targetId)
+    const id = noteService.selectedCategories.find((id) => id === targetId)
     if (!id) {
-      return selectedCategories.push(targetId)
+      return noteService.selectedCategories.push(targetId)
     }
 
-    selectedCategories.splice(selectedCategories.indexOf(id), 1)
+    noteService.selectedCategories.splice(
+      noteService.selectedCategories.indexOf(id),
+      1
+    )
   }
 </script>
 
@@ -73,16 +79,14 @@
   </Button>
 
   <Dialog bind:isOpen={isAddingNote} heading="Add new note">
-    {#if categoryService}
-      <NoteForm
-        noteAdded={handleAddNewNote}
-        categories={categoryService.getAllCategories()}
-      />
-    {/if}
+    <NoteForm
+      noteAdded={handleAddNewNote}
+      categories={categoryService.categories}
+    />
   </Dialog>
 
   <menu class="flex flex-col">
-    {#if categoryService?.categories}
+    {#if categoryService.categories.length}
       {#each categoryService.categories as category (category.id)}
         <NoteCategoryItem
           {category}

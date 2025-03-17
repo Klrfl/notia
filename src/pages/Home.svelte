@@ -1,6 +1,6 @@
 <script lang="ts">
-  import NoteList from "@/lib/NoteList.svelte"
   import HomeSidebar from "@/lib/HomeSidebar.svelte"
+  import NoteList from "@/lib/NoteList.svelte"
 </script>
 
 <main class="main-grid">
