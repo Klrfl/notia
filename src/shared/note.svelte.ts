@@ -171,8 +171,12 @@ export class NoteService {
     })
   }
 
-  deleteNotes(noteIds: Note["id"][]) {
-    console.log(noteIds)
+  async deleteNotes(noteIds: Note["id"][]) {
+    for (const id of noteIds) {
+      await this.deleteNote(id)
+    }
+
+    this.notes = this.notes.filter((note) => !noteIds.includes(note.id))
   }
 }
 

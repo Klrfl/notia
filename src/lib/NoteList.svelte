@@ -107,7 +107,16 @@
             >
               Add category
             </Button>
-            <Button variant="danger" size="sm">Delete</Button>
+            <Button
+              variant="danger"
+              size="sm"
+              onclick={() => {
+                if (!confirm("are you sure?")) return
+                noteService.deleteNotes(selectedNotes)
+              }}
+            >
+              Delete
+            </Button>
           </Popover.Content>
         </Popover.Portal>
       </Popover.Root>
