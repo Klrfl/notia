@@ -158,7 +158,7 @@
     </header>
   {/if}
 
-  {#if !noteService.notes.length}
+  {#if !noteService.filteredNotes.length}
     <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
   {:else}
     <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
