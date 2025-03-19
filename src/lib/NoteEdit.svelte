@@ -1,15 +1,12 @@
 <script lang="ts">
+  import type { Note, NoteCategory } from "../types/"
+
   import Button from "./ui/Button.svelte"
   import Input from "./ui/Input.svelte"
-  import type { Note, NoteCategory } from "../types/"
+  import Tiptap from "@/lib/ui/Tiptap.svelte"
 
   import Pencil from "lucide-svelte/icons/pencil"
   import Copy from "lucide-svelte/icons/copy"
-  import Eye from "lucide-svelte/icons/eye"
-
-  import { marked } from "marked"
-  import DOMPurify from "dompurify"
-  import { onMount } from "svelte"
 
   interface Props {
     editedNote: Note
@@ -18,28 +15,18 @@
   }
 
   const { categories, editedNote = $bindable(), editNote }: Props = $props()
-
-  let isMobile = $state(false)
-  window.addEventListener(
-    "resize",
-    () => (isMobile = window.matchMedia("(max-width: 768px)").matches)
-  )
-  onMount(() => (isMobile = window.matchMedia("(max-width: 768px)").matches))
-
-  let textarea: HTMLTextAreaElement | undefined = $state()
-  let showPreview = $state(false)
 </script>
 
 <form
   method="dialog"
-  class="grid md:grid-cols-6 grid-flow-dense md:gap-4"
+  class="grid grid-flow-dense md:gap-4"
   onsubmit={() => {
     // you can't unwrap proxies natively
     // what is wrong with Svelte what the f
     editNote(JSON.parse(JSON.stringify(editedNote)))
   }}
 >
-  <fieldset class="flex flex-col gap-4 col-span-full md:col-span-2">
+  <fieldset class="flex flex-col gap-4 col-span-full">
     <label for="title">Title</label>
     <Input
       type="text"
@@ -49,7 +36,7 @@
       required
     />
 
-    <fieldset class="grid grid-cols-subgrid">
+    <fieldset class="grid">
       <legend>categories</legend>
 
       {#if categories?.length}
@@ -79,55 +66,13 @@
       <p class="text-sm text-gray-600">Format your text in markdown.</p>
     </label>
 
-    {#if isMobile}
-      <div class="flex">
-        <button
-          type="button"
-          onclick={() => (showPreview = false)}
-          disabled={!showPreview}
-          class="preview-toggle input"
-        >
-          <Pencil />
-          input
-        </button>
-
-        <button
-          type="button"
-          onclick={() => (showPreview = true)}
-          disabled={showPreview}
-          class="preview-toggle preview"
-        >
-          <Eye />
-          preview
-        </button>
-      </div>
-    {/if}
-
-    {#if !isMobile || !showPreview}
-      <textarea
-        bind:this={textarea}
-        class="bg-gray-200/50 focus-visible:outline focus-visible:outline-gray-500 p-4 md:min-h-80"
-        rows={textarea ? Math.round(textarea.clientHeight / 12) : 0}
-        id="content"
-        name="content"
-        bind:value={editedNote.content}
-        required
-      >
-      </textarea>
-    {/if}
+    <Tiptap
+      class="focus-visible:outline focus-visible:outline-gray-500 p-4 md:min-h-80"
+      bind:content={editedNote.content}
+    />
   </fieldset>
 
-  {#if !isMobile || showPreview}
-    <div class="preview bg-gray-100 p-4 md:col-span-4">
-      {#await marked.parse(editedNote.content.trim()) then parsed}
-        {@html DOMPurify.sanitize(parsed)}
-      {:catch}
-        <p>something went wrong when rendering your note.</p>
-      {/await}
-    </div>
-  {/if}
-
-  <p class="text-sm text-gray-600 order-last text-right md:col-span-4">
+  <p class="text-sm text-gray-600 order-last text-right">
     <span class="block">
       {Intl.DateTimeFormat("en-US", {
         dateStyle: "long",
@@ -160,22 +105,3 @@
     Copy note as text
   </Button>
 </form>
-
-<style>
-  @reference "../app.css";
-
-  .preview-toggle {
-    border-top: transparent;
-    border-bottom: transparent;
-    @apply flex gap-4 px-4 py-2 cursor-pointer bg-gray-200/50 border-2 border-t-slate-200 not-disabled:bg-gray-300 not-disabled:text-gray-600 disabled:cursor-not-allowed;
-  }
-
-  .preview-toggle.input {
-    @apply border-l-slate-200;
-    border-right: transparent;
-  }
-
-  .preview-toggle.preview {
-    @apply border-l-slate-200 border-r-slate-200;
-  }
-</style>
