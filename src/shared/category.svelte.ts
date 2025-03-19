@@ -1,4 +1,5 @@
 import type { NoteCategory } from "@/types"
+import { db as database } from "./db.svelte"
 
 export class CategoryService {
   db: IDBDatabase
@@ -8,20 +9,15 @@ export class CategoryService {
     this.db = db
   }
 
-  getAllCategories() {
-    return new Promise((resolve, reject) => {
-      const categoriesTx = this.db.transaction("categories")
-      const noteCategoriesReq = categoriesTx.objectStore("categories").getAll()
+  getAllCategories(): NoteCategory[] {
+    const categoriesTx = this.db.transaction("categories")
+    const noteCategoriesReq = categoriesTx.objectStore("categories").getAll()
 
-      noteCategoriesReq.addEventListener("success", () => {
-        this.categories = noteCategoriesReq.result
-        return resolve(this.categories)
-      })
-
-      noteCategoriesReq.addEventListener("error", () => {
-        return reject(noteCategoriesReq.error)
-      })
+    noteCategoriesReq.addEventListener("success", () => {
+      this.categories = noteCategoriesReq.result
     })
+
+    return this.categories
   }
 
   addCategory(name: NoteCategory["name"]) {
@@ -46,7 +42,7 @@ export class CategoryService {
   }
 
   editCategory(newCategory: NoteCategory) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const tx = this.db?.transaction("categories", "readwrite")
       const req = tx?.objectStore("categories").put(newCategory)
 
@@ -76,3 +72,5 @@ export class CategoryService {
     })
   }
 }
+
+export const categoryService = new CategoryService(database)

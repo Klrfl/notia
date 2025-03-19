@@ -38,3 +38,5 @@ export async function openDB(): Promise<IDBDatabase> {
     })
   })
 }
+
+export const db = await openDB()

@@ -6,31 +6,18 @@
 
   import { marked } from "marked"
   import DOMPurify from "dompurify"
-  import { onMount } from "svelte"
-  import { openDB } from "../shared/db.svelte"
 
   interface Props {
     noteAdded: (note: InsertableNote) => void
+    categories: NoteCategory[]
   }
 
-  const { noteAdded }: Props = $props()
+  const { noteAdded, categories }: Props = $props()
 
   const newNote = $state<InsertableNote>({
     title: "",
     content: "",
     categories: [],
-  })
-
-  let db = $state<IDBDatabase>()
-  let categories = $state<NoteCategory[]>()
-
-  onMount(async () => {
-    db = await openDB()
-
-    const tx = db.transaction("categories")
-    const req = tx.objectStore("categories").getAll()
-
-    req.addEventListener("success", () => (categories = req.result))
   })
 </script>
 
@@ -61,7 +48,7 @@
     <fieldset class="grid grid-cols-subgrid">
       <legend>categories</legend>
 
-      {#if categories?.length}
+      {#if categories.length}
         <div class="flex flex-wrap gap-2">
           {#each categories as category (category.id)}
             <label

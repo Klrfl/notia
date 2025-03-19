@@ -1,24 +1,38 @@
 import type { InsertableNote, Note, NoteCategory } from "@/types"
+import { db as database } from "./db.svelte"
 
 export class NoteService {
-  db: IDBDatabase
+  readonly db: IDBDatabase
+
   notes: Note[] = $state([])
+  selectedCategories: number[] = $state([])
+
+  readonly filteredNotes = $derived(
+    !this.selectedCategories.length
+      ? this.notes
+      : this.notes.filter((note) => {
+          return (
+            note.categories &&
+            note.categories?.some((category) =>
+              this.selectedCategories.includes(category)
+            )
+          )
+        })
+  )
 
   constructor(db: IDBDatabase) {
     this.db = db
   }
 
   getAllNotes() {
-    return new Promise((resolve) => {
-      const notesTx = this.db.transaction("notes")
-      const notesReq = notesTx.objectStore("notes").getAll()
+    const notesTx = this.db.transaction("notes")
+    const notesReq = notesTx.objectStore("notes").getAll()
 
-      notesReq.addEventListener("success", () => {
-        this.notes = notesReq.result
-      })
-
-      return resolve(this.notes)
+    notesReq.addEventListener("success", () => {
+      this.notes = notesReq.result
     })
+
+    return this.notes
   }
 
   addNewNote(note: InsertableNote): Promise<Note[]> {
@@ -116,4 +130,54 @@ export class NoteService {
       return resolve(this.notes)
     })
   }
+
+  categorizeNotes(
+    selectedNotes: Array<Note["id"]>,
+    newCategory: Array<NoteCategory["id"]>
+  ) {
+    return new Promise((resolve, reject) => {
+      const notesTx = this.db.transaction("notes", "readwrite")
+      const notesStore = notesTx.objectStore("notes")
+
+      // TODO: refactor to use indexedDB indices to filter
+      // through objects instead of doing it in code
+      const cursorReq = notesStore.openCursor()
+
+      cursorReq.addEventListener("success", () => {
+        const cursor = cursorReq.result
+        if (!cursor) return
+
+        const note = cursor.value as Note
+        if (!selectedNotes.includes(note.id)) return cursor.continue()
+
+        note.categories = Array.from(
+          new Set([...(note.categories ?? []), ...newCategory])
+        )
+
+        const updateReq = notesStore.put(note)
+
+        updateReq.addEventListener("success", () => {
+          const targetNote = this.notes.find(({ id }) => id === note.id)
+          if (!targetNote) {
+            return reject("failed to categorize notes")
+          }
+
+          this.notes.splice(this.notes.indexOf(targetNote), 1, note)
+          return resolve(this.notes)
+        })
+
+        cursor.continue()
+      })
+    })
+  }
+
+  async deleteNotes(noteIds: Note["id"][]) {
+    for (const id of noteIds) {
+      await this.deleteNote(id)
+    }
+
+    this.notes = this.notes.filter((note) => !noteIds.includes(note.id))
+  }
 }
+
+export const noteService = new NoteService(database)
