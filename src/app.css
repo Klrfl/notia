@@ -12,6 +12,28 @@ body {
   @apply font-bold;
 }
 
+.preview
+  :is(
+    header,
+    footer,
+    figure,
+    video,
+    details,
+    blockquote,
+    ul,
+    ol,
+    dl,
+    fieldset,
+    pre,
+    pre > code
+  ) {
+  display: block;
+  margin: 0.5rem 0 1rem;
+  width: 100%;
+  overflow: auto hidden;
+  text-align: left;
+}
+
 .preview h1 {
   @apply text-3xl;
 }
@@ -31,15 +53,24 @@ body {
   @apply italic;
 }
 
-.preview :is(ul, li) {
-  @apply list-disc;
+.preview :is(ul) {
+  list-style: disc;
 }
 
-.preview ul {
-  @apply ml-4 my-4;
+.preview ol {
+  list-style: decimal;
+}
+
+.preview :is(ol, ul, dl) {
+  margin: 1rem 0;
+  padding: 0 0 0 2rem;
 }
 
 .preview p {
-  margin-bottom: 1rem;
   line-height: 1.6;
+}
+
+.preview blockquote {
+  border-left: 0.4rem solid gray;
+  padding: 0 0 0 0.4rem;
 }

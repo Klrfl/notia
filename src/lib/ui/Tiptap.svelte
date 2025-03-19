@@ -3,9 +3,16 @@
   import StarterKit from "@tiptap/starter-kit"
   import { onDestroy, onMount } from "svelte"
 
+  import TextQuote from "lucide-svelte/icons/text-quote"
+  import Heading_1 from "lucide-svelte/icons/heading-1"
+  import Heading_2 from "lucide-svelte/icons/heading-2"
+  import Heading_3 from "lucide-svelte/icons/heading-3"
+  import Heading_4 from "lucide-svelte/icons/heading-4"
+
   interface Props {
     class?: string | string[]
     content?: string
+    [key: string]: unknown
   }
 
   let { content = $bindable(""), class: className = "" }: Props = $props()
@@ -20,8 +27,12 @@
       content,
       editorProps: {
         attributes: {
-          class:
+          class: [
+            "p-4",
             typeof className === "string" ? className : className.join(" "),
+          ]
+            .flat()
+            .join(" "),
         },
       },
       onTransaction: () => {
@@ -44,7 +55,7 @@
       onclick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
       class:active={editor.isActive("heading", { level: 1 })}
     >
-      H1
+      <Heading_1 />
     </button>
 
     <button
@@ -53,7 +64,24 @@
       onclick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
       class:active={editor.isActive("heading", { level: 2 })}
     >
-      H2
+      <Heading_2 />
+    </button>
+    <button
+      type="button"
+      class="tiptap-btn"
+      onclick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+      class:active={editor.isActive("heading", { level: 2 })}
+    >
+      <Heading_3 />
+    </button>
+
+    <button
+      type="button"
+      class="tiptap-btn"
+      onclick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+      class:active={editor.isActive("heading", { level: 2 })}
+    >
+      <Heading_4 />
     </button>
 
     <button
@@ -63,6 +91,14 @@
       class:active={editor.isActive("paragraph")}
     >
       P
+    </button>
+
+    <button
+      type="button"
+      class="tiptap-btn"
+      onclick={() => editor.chain().focus().setBlockquote().run()}
+    >
+      <TextQuote />
     </button>
   {/if}
 </header>
