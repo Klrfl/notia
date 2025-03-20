@@ -1,13 +1,21 @@
 <script lang="ts">
   import { Editor } from "@tiptap/core"
   import StarterKit from "@tiptap/starter-kit"
-  import { onDestroy, onMount } from "svelte"
+  import { onMount } from "svelte"
 
   import TextQuote from "lucide-svelte/icons/text-quote"
+  import OrderedList from "lucide-svelte/icons/list-ordered"
+
   import Heading_1 from "lucide-svelte/icons/heading-1"
   import Heading_2 from "lucide-svelte/icons/heading-2"
   import Heading_3 from "lucide-svelte/icons/heading-3"
   import Heading_4 from "lucide-svelte/icons/heading-4"
+
+  import List from "lucide-svelte/icons/list"
+  import Bold from "lucide-svelte/icons/bold"
+  import Italic from "lucide-svelte/icons/italic"
+  import Strike from "lucide-svelte/icons/strikethrough"
+  import Code from "lucide-svelte/icons/code"
 
   interface Props {
     class?: string | string[]
@@ -40,58 +48,101 @@
         content = editor.getHTML()
       },
     })
-  })
 
-  onDestroy(() => {
-    if (editor) editor.destroy()
+    return () => {
+      if (editor) editor.destroy()
+      editor = null
+    }
   })
 </script>
 
-<header class="flex items-center outline-2 outline-gray-200">
-  {#if editor}
-    <button
-      type="button"
-      class="tiptap-btn"
-      onclick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-      class:active={editor.isActive("heading", { level: 1 })}
-    >
-      <Heading_1 />
-    </button>
+{#if editor}
+  <header class="flex items-center border-2 border-gray-300 overflow-x-auto">
+    <div class="group">
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+      >
+        <Heading_1 />
+      </button>
 
-    <button
-      type="button"
-      class="tiptap-btn"
-      onclick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-      class:active={editor.isActive("heading", { level: 2 })}
-    >
-      <Heading_2 />
-    </button>
-    <button
-      type="button"
-      class="tiptap-btn"
-      onclick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-      class:active={editor.isActive("heading", { level: 2 })}
-    >
-      <Heading_3 />
-    </button>
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+      >
+        <Heading_2 />
+      </button>
 
-    <button
-      type="button"
-      class="tiptap-btn"
-      onclick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-      class:active={editor.isActive("heading", { level: 2 })}
-    >
-      <Heading_4 />
-    </button>
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+      >
+        <Heading_3 />
+      </button>
 
-    <button
-      type="button"
-      class="tiptap-btn"
-      onclick={() => editor.chain().focus().setParagraph().run()}
-      class:active={editor.isActive("paragraph")}
-    >
-      P
-    </button>
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+      >
+        <Heading_4 />
+      </button>
+    </div>
+
+    <div class="group">
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleBold().run()}
+      >
+        <Bold />
+      </button>
+
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleItalic().run()}
+      >
+        <Italic />
+      </button>
+
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleStrike().run()}
+      >
+        <Strike />
+      </button>
+
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().setParagraph().run()}
+      >
+        P
+      </button>
+    </div>
+
+    <div class="group">
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleBulletList().focus().run()}
+      >
+        <List />
+      </button>
+
+      <button
+        type="button"
+        class="tiptap-btn"
+        onclick={() => editor.chain().focus().toggleOrderedList().focus().run()}
+      >
+        <OrderedList />
+      </button>
+    </div>
 
     <button
       type="button"
@@ -100,15 +151,29 @@
     >
       <TextQuote />
     </button>
-  {/if}
-</header>
+
+    <button
+      type="button"
+      class="tiptap-btn"
+      onclick={() => editor.chain().focus().setCodeBlock().run()}
+    >
+      <Code />
+    </button>
+  </header>
+{/if}
 
 <div class="preview" bind:this={editorElement}></div>
 
 <style>
   @reference "@/app.css";
 
+  .group {
+    display: flex;
+    border-inline-end: 2px solid;
+    border-color: inherit;
+  }
+
   .tiptap-btn {
-    @apply leading-snug block py-2 px-4 hover:bg-gray-200 cursor-pointer;
+    @apply leading-snug block py-2 px-4 hover:bg-gray-300/50 cursor-pointer transition-colors;
   }
 </style>

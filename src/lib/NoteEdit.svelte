@@ -19,58 +19,52 @@
 
 <form
   method="dialog"
-  class="grid grid-flow-dense md:gap-4"
+  class="grid grid-flow-dense gap-4"
   onsubmit={() => {
     // you can't unwrap proxies natively
     // what is wrong with Svelte what the f
     editNote(JSON.parse(JSON.stringify(editedNote)))
   }}
 >
-  <fieldset class="flex flex-col gap-4 col-span-full">
-    <label for="title">Title</label>
-    <Input
-      type="text"
-      id="title"
-      name="title"
-      bind:value={editedNote.title}
-      required
-    />
+  <label for="title" class="sr-only">Title</label>
+  <Input
+    type="text"
+    id="title"
+    name="title"
+    title="edit title"
+    bind:value={editedNote.title}
+    required
+  />
 
-    <fieldset class="grid">
-      <legend>categories</legend>
+  {#if categories?.length}
+    <label for="input" class="sr-only">categories</label>
 
-      {#if categories?.length}
-        <div class="flex flex-wrap gap-2">
-          {#each categories as category (category.id)}
-            <label
-              for={`${category.id}-${category.name}`}
-              class="px-3 py-1 cursor-pointer outline-2 outline-gray-200 has-focus-visible:outline-blue-500 has-checked:bg-blue-400 has-checked:outline-blue-500 has-checked:text-white select-none rounded-full"
-            >
-              {category.name}
+    <fieldset class="flex flex-wrap gap-2" id="input">
+      {#each categories as category (category.id)}
+        <label
+          for={`${category.id}-${category.name}`}
+          class="block px-3 py-1 cursor-pointer outline-2 outline-gray-200 has-focus-visible:outline-blue-500 has-checked:bg-blue-400 has-checked:outline-blue-500 has-checked:text-white select-none rounded-full"
+        >
+          {category.name}
 
-              <input
-                type="checkbox"
-                class="sr-only"
-                id={`${category.id}-${category.name}`}
-                value={category.id}
-                bind:group={editedNote.categories}
-              />
-            </label>
-          {/each}
-        </div>
-      {/if}
+          <input
+            type="checkbox"
+            class="block sr-only"
+            id={`${category.id}-${category.name}`}
+            value={category.id}
+            bind:group={editedNote.categories}
+          />
+        </label>
+      {/each}
     </fieldset>
+  {/if}
 
-    <label for="content">
-      content
-      <p class="text-sm text-gray-600">Format your text in markdown.</p>
-    </label>
+  <label for="input" class="sr-only">content</label>
 
-    <Tiptap
-      class="focus-visible:outline focus-visible:outline-gray-500 p-4 md:min-h-80"
-      bind:content={editedNote.content}
-    />
-  </fieldset>
+  <Tiptap
+    class="focus-visible:outline focus-visible:outline-gray-500 p-4 md:min-h-80"
+    bind:content={editedNote.content}
+  />
 
   <p class="text-sm text-gray-600 order-last text-right">
     <span class="block">

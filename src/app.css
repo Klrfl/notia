@@ -74,3 +74,7 @@ body {
   border-left: 0.4rem solid gray;
   padding: 0 0 0 0.4rem;
 }
+
+.preview pre > code {
+  @apply p-4 bg-gray-200/60;
+}
