@@ -5,9 +5,14 @@
 
   import Button from "@/lib/ui/Button.svelte"
   import Dialog from "@/lib/ui/Dialog.svelte"
+  import { onMount } from "svelte"
+  import { setTheme, getTheme } from "@/shared/dark"
 
   const title = "Notia"
   let isOpen = $state(false)
+  let preferredTheme = $state(getTheme())
+
+  onMount(() => setTheme(preferredTheme))
 </script>
 
 <header
@@ -39,6 +44,15 @@
       <div class="sr-only">Close sidebar</div>
     </label>
   </div>
+
+  <Button
+    onclick={() => {
+      preferredTheme = preferredTheme === "light" ? "dark" : "light"
+      setTheme(preferredTheme)
+    }}
+  >
+    {preferredTheme}
+  </Button>
 
   <Button
     variant="outline"
