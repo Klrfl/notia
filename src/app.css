@@ -4,8 +4,10 @@
   --font-sans: "Inter Variable", sans-serif;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
-  @apply font-sans bg-gray-100;
+  @apply font-sans bg-gray-100 dark:bg-slate-900 dark:text-gray-300;
 }
 
 .preview :is(h1, h2, h3, h4, h5, h6) {
@@ -76,5 +78,5 @@ body {
 }
 
 .preview pre > code {
-  @apply p-4 bg-gray-200/60;
+  @apply p-4 bg-gray-200/60 dark:bg-gray-700/50;
 }

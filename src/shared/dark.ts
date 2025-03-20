@@ -2,7 +2,7 @@ const THEME_KEY = "notia-theme"
 type Theme = "light" | "dark"
 
 export function setTheme(theme: Theme) {
-  const body = document.body
+  const body = document.documentElement
   body.className = ""
 
   localStorage.setItem(THEME_KEY, theme)
