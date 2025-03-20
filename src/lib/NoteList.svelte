@@ -64,7 +64,7 @@
 <section class="content p-8 flex flex-col gap-4">
   {#if selectedNotes.length}
     <header
-      class="flex justify-between items-center py-4 px-8 bg-white rounded-lg"
+      class="flex justify-between items-center py-4 px-8 bg-white dark:bg-slate-800 rounded-lg"
       transition:fly
     >
       <Button size="sm" variant="outline" onclick={() => (selectedNotes = [])}>
@@ -95,7 +95,7 @@
 
         <Popover.Portal>
           <Popover.Content
-            class="flex flex-col gap-4 bg-white/80 p-4 rounded-lg shadow-lg right-0"
+            class="flex flex-col gap-4 bg-white/80 dark:bg-slate-800/80 p-4 rounded-lg shadow-lg right-0"
             sideOffset={8}
           >
             <Button
@@ -166,7 +166,7 @@
         <li
           class={[
             "flex flex-col gap-4 p-8 group relative",
-            "bg-white has-[#note-item-select:checked]:outline-blue-400 outline outline-gray-200 rounded-lg",
+            "bg-white dark:bg-slate-800 has-[#note-item-select:checked]:outline-blue-400 outline outline-gray-200 dark:outline-slate-700 rounded-lg",
           ]}
         >
           <!-- svelte doesn't allow inputs to be bound with bind:group -->

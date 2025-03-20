@@ -16,9 +16,12 @@
 </script>
 
 <header
-  class="header col-span-full flex gap-4 items-center px-8 py-4 bg-white border-b border-b-gray-200"
+  class={[
+    "header col-span-full flex gap-4 items-center px-8 py-4",
+    "bg-white dark:bg-slate-800 border-b border-b-slate-200 dark:border-b-slate-700",
+  ]}
 >
-  <h1 class="text-4xl text-slate-700">{title}</h1>
+  <h1 class="text-4xl">{title}</h1>
 
   <div class="order-first">
     <input
@@ -46,6 +49,7 @@
   </div>
 
   <Button
+    class="ml-auto"
     onclick={() => {
       preferredTheme = preferredTheme === "light" ? "dark" : "light"
       setTheme(preferredTheme)
@@ -57,7 +61,7 @@
   <Button
     variant="outline"
     size="sm"
-    class="mt-auto ml-auto text-gray-700"
+    class="text-gray-700"
     icon
     onclick={() => (isOpen = true)}
   >

@@ -36,7 +36,7 @@
       editorProps: {
         attributes: {
           class: [
-            "p-4 min-h-[50vh]",
+            "p-4 min-h-[50vh] dark:bg-slate-900/50",
             typeof className === "string" ? className : className.join(" "),
           ]
             .flat()
@@ -57,7 +57,9 @@
 </script>
 
 {#if editor}
-  <header class="flex items-center border-2 border-gray-300 overflow-x-auto">
+  <header
+    class="flex items-center border-2 border-gray-300 dark:border-slate-700 overflow-x-auto"
+  >
     <div class="group">
       <button
         type="button"

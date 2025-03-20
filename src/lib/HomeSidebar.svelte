@@ -71,7 +71,10 @@
 </script>
 
 <menu
-  class="sidebar absolute shadow-lg md:shadow-none md:relative flex flex-col gap-4 content-start bg-white border-r border-r-gray-200 px-8 py-4"
+  class={[
+    "sidebar absolute shadow-lg md:shadow-none md:relative flex flex-col gap-4 content-start px-8 py-4",
+    "bg-white dark:bg-slate-800 border-r border-r-slate-200 dark:border-r-slate-700",
+  ]}
 >
   <Button icon onclick={() => (isAddingNote = true)}>
     <Plus />
