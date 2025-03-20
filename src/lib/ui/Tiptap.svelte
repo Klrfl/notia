@@ -36,7 +36,7 @@
       editorProps: {
         attributes: {
           class: [
-            "p-4",
+            "p-4 min-h-[50vh]",
             typeof className === "string" ? className : className.join(" "),
           ]
             .flat()
