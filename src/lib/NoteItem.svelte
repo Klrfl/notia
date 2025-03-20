@@ -5,7 +5,6 @@
   import Pencil from "lucide-svelte/icons/pencil"
   import Trash from "lucide-svelte/icons/trash"
 
-  import { marked } from "marked"
   import DOMPurify from "dompurify"
 
   interface Props {
@@ -19,13 +18,7 @@
 
 <h2 class="text-xl">{note.title}</h2>
 <article class="text-gray-700 line-clamp-3 preview select-none">
-  {#await marked.parse(note.content.trim())}
-    tunggu sebentar
-  {:then parsed}
-    {@html DOMPurify.sanitize(parsed)}
-  {:catch}
-    Something went wrong
-  {/await}
+  {@html DOMPurify.sanitize(note.content)}
 </article>
 
 <div
