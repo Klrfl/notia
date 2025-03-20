@@ -1,25 +1,43 @@
 <script lang="ts">
-  import type { HTMLDialogAttributes } from "svelte/elements"
   import CircleX from "lucide-svelte/icons/circle-x"
   import { Dialog } from "bits-ui"
+  import type { Snippet } from "svelte"
 
-  interface Props extends HTMLDialogAttributes {
-    isOpen: boolean
+  interface Props extends Dialog.RootProps {
+    isOpen?: boolean
     heading: string
     description?: string
+    trigger?: Snippet
     [key: string]: unknown
   }
 
   let {
-    isOpen = $bindable(false),
+    isOpen = $bindable(),
     heading,
     children,
     description = "",
+    trigger,
     ...restProps
   }: Props = $props()
+
+  function getOpen() {
+    return isOpen ?? false // don't worry this function won't execute if isOpen is undefined
+  }
+
+  function setOpen(open: boolean) {
+    isOpen = open
+  }
 </script>
 
-<Dialog.Root bind:open={isOpen} {...restProps}>
+{#snippet child()}
+  {#if trigger}
+    <Dialog.Trigger>
+      {#snippet child()}
+        {@render trigger()}
+      {/snippet}
+    </Dialog.Trigger>
+  {/if}
+
   <Dialog.Portal>
     <Dialog.Overlay
       class={[
@@ -30,8 +48,8 @@
     <Dialog.Content
       class={[
         "dialog-content",
-        "fixed left-0 right-0 bottom-0 max-w-6xl mx-auto z-20",
-        "bg-white rounded-lg shadow-lg",
+        "fixed left-0 right-0 bottom-0 md:top-[50%] md:-translate-y-1/2 max-w-6xl mx-auto z-20",
+        "bg-white rounded-lg shadow-lg overflow-auto h-max",
       ]}
     >
       <!-- wrapper for content, don't delete -->
@@ -61,7 +79,17 @@
       </section>
     </Dialog.Content>
   </Dialog.Portal>
-</Dialog.Root>
+{/snippet}
+
+{#if isOpen !== undefined}
+  <Dialog.Root bind:open={getOpen, setOpen} {...restProps}>
+    {@render child()}
+  </Dialog.Root>
+{:else}
+  <Dialog.Root {...restProps}>
+    {@render child()}
+  </Dialog.Root>
+{/if}
 
 <style>
   :global(.dialog-content) {
