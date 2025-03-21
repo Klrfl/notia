@@ -6,13 +6,14 @@
   import Dialog from "./ui/Dialog.svelte"
   import NoteItem from "./NoteItem.svelte"
   import NoteEdit from "./NoteEdit.svelte"
+  import { Checkbox, Popover } from "bits-ui"
 
   import { noteService } from "@/shared/note.svelte"
   import { categoryService } from "@/shared/category.svelte"
 
   import Ellipsis from "lucide-svelte/icons/ellipsis"
   import X from "lucide-svelte/icons/x"
-  import { Popover } from "bits-ui"
+  import Check from "lucide-svelte/icons/check"
   import { onMount } from "svelte"
 
   onMount(() => {
@@ -165,30 +166,41 @@
       {#each noteService.filteredNotes as note (note.id)}
         <li
           class={[
-            "flex flex-col gap-4 p-8 group relative",
-            "bg-white dark:bg-slate-800 has-[#note-item-select:checked]:outline-blue-400 outline outline-gray-200 dark:outline-slate-700 rounded-lg",
+            "group relative",
+            "bg-white dark:bg-slate-800 outline outline-gray-200 dark:outline-slate-700 rounded-lg",
+            "has-[[data-state=checked]]:outline-blue-500 transition-colors",
           ]}
         >
-          <!-- svelte doesn't allow inputs to be bound with bind:group -->
-          <!-- if the bound variable and the input is on different components -->
-          <!-- so I have to do this... sorry -->
-          <!--- would be cool if svelte has something like Vue's defineModel -->
-
-          <label for="note-item-select" class="sr-only">Select note</label>
-          <input
-            type="checkbox"
-            name="note-item-select"
-            id="note-item-select"
+          <Checkbox.Root
+            id={String(note.id)}
             class={[
-              "absolute top-0 left-0 scale-150 -translate-y-1/2",
-              "opacity-0 group-hover:opacity-100 checked:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer",
+              "absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2",
+              "outline outline-gray-200 dark:outline-slate-700",
+              "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer",
+              "aspect-square size-12 bg-white dark:bg-slate-800 p-4 rounded-lg",
+              "data-[state=checked]:dark:bg-blue-500 data-[state=checked]:bg-blue-500 data-[state=checked]:opacity-100",
+              "text-white",
             ]}
-            value={note.id}
-            bind:group={selectedNotes}
-          />
+            onCheckedChange={(checked) =>
+              checked
+                ? selectedNotes.push(note.id)
+                : selectedNotes.splice(selectedNotes.indexOf(note.id), 1)}
+            checked={selectedNotes.includes(note.id)}
+          >
+            {#snippet children({ checked })}
+              {#if checked}
+                <Check size="1.2rem" />
+              {/if}
+            {/snippet}
+          </Checkbox.Root>
 
           <NoteItem
             {note}
+            isSelectingNote={selectedNotes.length !== 0}
+            selectNote={(id) =>
+              !selectedNotes.includes(id)
+                ? selectedNotes.push(note.id)
+                : selectedNotes.splice(selectedNotes.indexOf(note.id), 1)}
             editNote={initiateEditNote}
             deleteNote={handleDeleteNote}
           />
