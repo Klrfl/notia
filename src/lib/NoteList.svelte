@@ -104,6 +104,7 @@
               size="sm"
               onclick={() => {
                 isSelectingCategories = true
+                selectedNotes = []
                 isPopoverOpen = false
               }}
             >
@@ -115,6 +116,9 @@
               onclick={() => {
                 if (!confirm("are you sure?")) return
                 noteService.deleteNotes(selectedNotes)
+
+                selectedNotes = []
+                isPopoverOpen = false
               }}
             >
               Delete
