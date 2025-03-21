@@ -17,14 +17,16 @@
 </script>
 
 <h2 class="text-xl">{note.title}</h2>
-<article class="text-gray-700 line-clamp-3 preview select-none">
+<article class="line-clamp-3 preview select-none">
   {@html DOMPurify.sanitize(note.content)}
 </article>
 
 <div
   class="@container grid grid-cols-2 gap-2 sm:gap-4 lg:justify-end *:min-w-max mt-auto"
 >
-  <p class="col-span-full justify-self-end text-sm text-gray-500">
+  <p
+    class="col-span-full justify-self-end text-sm text-gray-500 dark:text-gray-300"
+  >
     {Intl.DateTimeFormat("en-US", {
       dateStyle: "long",
       timeStyle: "medium",

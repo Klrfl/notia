@@ -1,19 +1,30 @@
 <script>
-  import Menu from "lucide-svelte/icons/menu"
-  import Info from "lucide-svelte/icons/info"
-  import X from "lucide-svelte/icons/x"
-
   import Button from "@/lib/ui/Button.svelte"
   import Dialog from "@/lib/ui/Dialog.svelte"
 
+  import Menu from "lucide-svelte/icons/menu"
+  import Info from "lucide-svelte/icons/info"
+  import X from "lucide-svelte/icons/x"
+  import Moon from "lucide-svelte/icons/moon"
+  import Sun from "lucide-svelte/icons/sun"
+
+  import { onMount } from "svelte"
+  import { setTheme, getTheme } from "@/shared/dark"
+
   const title = "Notia"
   let isOpen = $state(false)
+  let preferredTheme = $state(getTheme())
+
+  onMount(() => setTheme(preferredTheme))
 </script>
 
 <header
-  class="header col-span-full flex gap-4 items-center px-8 py-4 bg-white border-b border-b-gray-200"
+  class={[
+    "header col-span-full flex gap-4 items-center px-8 py-4",
+    "bg-white dark:bg-slate-800 border-b border-b-slate-200 dark:border-b-slate-700",
+  ]}
 >
-  <h1 class="text-4xl text-slate-700">{title}</h1>
+  <h1 class="text-4xl">{title}</h1>
 
   <div class="order-first">
     <input
@@ -41,12 +52,22 @@
   </div>
 
   <Button
-    variant="outline"
+    class="ml-auto hover:bg-gray-200"
+    variant="none"
     size="sm"
-    class="mt-auto ml-auto text-gray-700"
-    icon
-    onclick={() => (isOpen = true)}
+    onclick={() => {
+      preferredTheme = preferredTheme === "light" ? "dark" : "light"
+      setTheme(preferredTheme)
+    }}
   >
+    {#if preferredTheme === "light"}
+      <Moon />
+    {:else}
+      <Sun />
+    {/if}
+  </Button>
+
+  <Button variant="outline" size="sm" icon onclick={() => (isOpen = true)}>
     <Info />
     About Notia
   </Button>
@@ -79,6 +100,6 @@
   @reference "@/app.css";
 
   .sidebar-toggle {
-    @apply md:hidden p-4 cursor-pointer hover:bg-gray-200;
+    @apply md:hidden px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-slate-900/50;
   }
 </style>

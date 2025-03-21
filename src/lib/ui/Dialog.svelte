@@ -49,7 +49,7 @@
       class={[
         "dialog-content",
         "fixed left-0 right-0 bottom-0 md:top-[50%] md:-translate-y-1/2 max-w-6xl mx-auto z-20",
-        "bg-white rounded-lg shadow-lg overflow-auto h-max",
+        "bg-white dark:bg-slate-800 outline outline-slate-200 dark:outline-slate-700 rounded-lg shadow-lg overflow-auto h-max",
       ]}
     >
       <!-- wrapper for content, don't delete -->
