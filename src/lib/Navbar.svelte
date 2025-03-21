@@ -1,10 +1,13 @@
 <script>
+  import Button from "@/lib/ui/Button.svelte"
+  import Dialog from "@/lib/ui/Dialog.svelte"
+
   import Menu from "lucide-svelte/icons/menu"
   import Info from "lucide-svelte/icons/info"
   import X from "lucide-svelte/icons/x"
+  import Moon from "lucide-svelte/icons/moon"
+  import Sun from "lucide-svelte/icons/sun"
 
-  import Button from "@/lib/ui/Button.svelte"
-  import Dialog from "@/lib/ui/Dialog.svelte"
   import { onMount } from "svelte"
   import { setTheme, getTheme } from "@/shared/dark"
 
@@ -50,21 +53,21 @@
 
   <Button
     class="ml-auto"
+    variant="none"
+    size="sm"
     onclick={() => {
       preferredTheme = preferredTheme === "light" ? "dark" : "light"
       setTheme(preferredTheme)
     }}
   >
-    {preferredTheme}
+    {#if preferredTheme === "light"}
+      <Moon />
+    {:else}
+      <Sun />
+    {/if}
   </Button>
 
-  <Button
-    variant="outline"
-    size="sm"
-    class="text-gray-700"
-    icon
-    onclick={() => (isOpen = true)}
-  >
+  <Button variant="outline" size="sm" icon onclick={() => (isOpen = true)}>
     <Info />
     About Notia
   </Button>
