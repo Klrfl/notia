@@ -36,7 +36,7 @@
       editorProps: {
         attributes: {
           class: [
-            "p-4 min-h-[50vh] dark:bg-slate-900/50",
+            "p-4 min-h-[50vh] bg-gray-200/50 dark:bg-slate-900/50",
             typeof className === "string" ? className : className.join(" "),
           ]
             .flat()

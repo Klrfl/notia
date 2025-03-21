@@ -52,7 +52,7 @@
   </div>
 
   <Button
-    class="ml-auto"
+    class="ml-auto hover:bg-gray-200"
     variant="none"
     size="sm"
     onclick={() => {
@@ -100,6 +100,6 @@
   @reference "@/app.css";
 
   .sidebar-toggle {
-    @apply md:hidden p-4 cursor-pointer hover:bg-gray-200;
+    @apply md:hidden px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-slate-900/50;
   }
 </style>
