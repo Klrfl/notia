@@ -1,6 +1,8 @@
 <script lang="ts">
   import { Editor } from "@tiptap/core"
   import StarterKit from "@tiptap/starter-kit"
+  import TaskList from "@tiptap/extension-task-list"
+  import TaskItem from "@tiptap/extension-task-item"
   import { onMount } from "svelte"
 
   import TextQuote from "lucide-svelte/icons/text-quote"
@@ -16,6 +18,7 @@
   import Italic from "lucide-svelte/icons/italic"
   import Strike from "lucide-svelte/icons/strikethrough"
   import Code from "lucide-svelte/icons/code"
+  import ListTodo from "lucide-svelte/icons/list-todo"
 
   interface Props {
     class?: string | string[]
@@ -31,7 +34,16 @@
   onMount(() => {
     editor = new Editor({
       element: editorElement,
-      extensions: [StarterKit],
+      extensions: [
+        StarterKit,
+        TaskList,
+        TaskItem.configure({
+          nested: true,
+          HTMLAttributes: {
+            class: "flex gap-4",
+          },
+        }),
+      ],
       content,
       editorProps: {
         attributes: {
@@ -152,6 +164,14 @@
       onclick={() => editor.chain().focus().setBlockquote().run()}
     >
       <TextQuote />
+    </button>
+
+    <button
+      type="button"
+      class="tiptap-btn"
+      onclick={() => editor.commands.toggleTaskList()}
+    >
+      <ListTodo />
     </button>
 
     <button
