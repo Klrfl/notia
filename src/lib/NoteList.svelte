@@ -15,6 +15,7 @@
   import X from "lucide-svelte/icons/x"
   import Check from "lucide-svelte/icons/check"
   import { onMount } from "svelte"
+  import { flip } from "svelte/animate"
 
   onMount(() => {
     noteService.getAllNotes()
@@ -164,16 +165,18 @@
   {/if}
 
   {#if !noteService.filteredNotes.length}
-    <p class="text-gray-700 text-center">No notes to display right now. 😴</p>
+    <p class="text-center">No notes to display right now. 😴</p>
   {:else}
     <ul class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
       {#each noteService.filteredNotes as note (note.id)}
         <li
           class={[
             "group relative",
-            "bg-white dark:bg-slate-800 outline outline-gray-200 dark:outline-slate-700 rounded-lg",
+            "bg-white dark:bg-slate-800 outline outline-gray-200 dark:outline-slate-700 rounded-lg hover:outline-2 dark:hover:bg-slate-700",
             "has-[[data-state=checked]]:outline-blue-500 transition-colors",
           ]}
+          transition:fly
+          animate:flip={{ duration: 500 }}
         >
           <Checkbox.Root
             id={String(note.id)}

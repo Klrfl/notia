@@ -7,7 +7,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 body {
-  @apply font-sans bg-gray-100 dark:bg-slate-900 dark:text-gray-300;
+  @apply font-sans bg-gray-100 dark:bg-slate-900 dark:text-gray-300 relative;
+  height: 100dvh;
 }
 
 .preview :is(h1, h2, h3, h4, h5, h6) {
