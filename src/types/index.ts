@@ -9,6 +9,7 @@ export interface Note {
   content: string
   createdAt: Date
   updatedAt: Date
+  trashedAt: Date | null
   categories?: Array<NoteCategory["id"]>
 }
 

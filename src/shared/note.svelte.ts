@@ -5,6 +5,9 @@ export class NoteService {
   readonly db: IDBDatabase
 
   notes: Note[] = $state([])
+  readonly trashedNotes = $derived.by(() => {
+    return this.notes.filter((note) => note.trashedAt !== null)
+  })
   selectedCategories: number[] = $state([])
 
   readonly filteredNotes = $derived(

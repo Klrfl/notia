@@ -10,11 +10,14 @@
   import Save from "lucide-svelte/icons/save"
   import Pencil from "lucide-svelte/icons/pencil"
   import Tag from "lucide-svelte/icons/tag"
+  import Trash from "lucide-svelte/icons/trash"
+  import Home from "lucide-svelte/icons/home"
 
   import NoteCategoryItem from "./NoteCategoryItem.svelte"
   import NoteForm from "./NoteForm.svelte"
   import Input from "./ui/Input.svelte"
   import { onMount } from "svelte"
+  import { Link } from "svelte-routing"
 
   onMount(() => categoryService.getAllCategories())
 
@@ -76,6 +79,41 @@
     "bg-white dark:bg-slate-800 border-r border-r-slate-200 dark:border-r-slate-700",
   ]}
 >
+  <Link to="/" let:active>
+    <Button
+      icon
+      class={[
+        "w-full justify-start",
+        active
+          ? "bg-sky-100 text-sky-900 outline outline-sky-600 dark:bg-sky-900/50 dark:text-sky-500"
+          : "",
+      ]}
+      variant="none"
+    >
+      <Home />
+      Home
+    </Button>
+  </Link>
+
+  <Link to="/trash" let:active>
+    <Button
+      title="trashed notes"
+      icon
+      class={[
+        "w-full justify-start",
+        active
+          ? "bg-sky-100 text-sky-900 outline outline-sky-600 dark:bg-sky-900/50 dark:text-sky-500"
+          : "",
+      ]}
+      variant="none"
+    >
+      <Trash />
+      Trash
+    </Button>
+  </Link>
+
+  <hr class="border-gray-300 dark:border-gray-700" />
+
   <Button icon onclick={() => (isAddingNote = true)}>
     <Plus />
     Add new note
