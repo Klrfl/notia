@@ -12,15 +12,17 @@ export class NoteService {
 
   readonly filteredNotes = $derived(
     !this.selectedCategories.length
-      ? this.notes
-      : this.notes.filter((note) => {
-          return (
-            note.categories &&
-            note.categories?.some((category) =>
-              this.selectedCategories.includes(category)
+      ? this.notes.filter((n) => n.trashedAt === null)
+      : this.notes
+          .filter((n) => n.trashedAt === null)
+          .filter((note) => {
+            return (
+              note.categories &&
+              note.categories?.some((category) =>
+                this.selectedCategories.includes(category)
+              )
             )
-          )
-        })
+          })
   )
 
   constructor(db: IDBDatabase) {
@@ -48,6 +50,7 @@ export class NoteService {
         ...note,
         createdAt: new Date(),
         updatedAt: new Date(),
+        trashedAt: null,
       }
 
       const newNoteReq = notesStore?.add(structuredClone(newNote))
@@ -124,6 +127,64 @@ export class NoteService {
   }
 
   deleteNote(noteId: Note["id"]) {
+    return new Promise((resolve, reject) => {
+      const notesStore = this.db?.transaction("notes", "readwrite")
+      const notesObjectStore = notesStore?.objectStore("notes")
+      const req = notesObjectStore.get(noteId)
+
+      let note: Note | undefined
+
+      req.addEventListener("success", () => {
+        note = req.result as Note
+        note.trashedAt = new Date()
+        const updateReq = notesObjectStore.put(note)
+
+        updateReq.addEventListener("success", () => {
+          // update ui
+          if (!note) return
+          this.notes[this.notes.findIndex((n) => n.id === note.id)] = note
+
+          resolve(this.notes)
+        })
+      })
+
+      req.addEventListener("error", () =>
+        reject({
+          message: "there was an error deleting your note.",
+          error: req.error,
+        })
+      )
+    })
+  }
+
+  recoverNote(noteId: Note["id"]) {
+    return new Promise((resolve, reject) => {
+      const notesStore = this.db?.transaction("notes", "readwrite")
+      const notesObjectStore = notesStore?.objectStore("notes")
+      const req = notesObjectStore.get(noteId)
+
+      req.addEventListener("success", () => {
+        const note = req.result as Note
+        note.trashedAt = null
+
+        const updateReq = notesObjectStore.put(note)
+
+        updateReq.addEventListener("success", () => {
+          this.notes[this.notes.findIndex((n) => n.id === note.id)] = note
+          return resolve(this.notes)
+        })
+      })
+
+      req.addEventListener("error", () =>
+        reject({
+          message: "there was an error recovering your note.",
+          error: req.error,
+        })
+      )
+    })
+  }
+
+  hardDeleteNote(noteId: Note["id"]) {
     return new Promise((resolve) => {
       const notesStore = this.db?.transaction("notes", "readwrite")
       const notesObjectStore = notesStore?.objectStore("notes")

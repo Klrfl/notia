@@ -4,8 +4,14 @@
 
   import { noteService } from "@/shared/note.svelte"
   import { onMount } from "svelte"
+  import Button from "@/lib/ui/Button.svelte"
+  import type { Note } from "@/types"
 
   onMount(() => noteService.getAllNotes())
+
+  function handleRecoverNote(noteId: Note["id"]) {
+    noteService.recoverNote(noteId)
+  }
 </script>
 
 <main class="main-grid">
@@ -24,6 +30,12 @@
           <article class="preview select-none">
             {@html DOMPurify.sanitize(note.content)}
           </article>
+
+          <Button
+            variant="outline"
+            class="mt-8"
+            onclick={() => handleRecoverNote(note.id)}>Recover note</Button
+          >
         </li>
       {/each}
     </ul>

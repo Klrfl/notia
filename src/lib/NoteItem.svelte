@@ -40,7 +40,10 @@
     <Button
       icon
       variant="danger"
-      onclick={() => deleteNote(note.id)}
+      onclick={(e) => {
+        e.stopPropagation()
+        deleteNote(note.id)
+      }}
       size="sm"
       class="col-span-full"
     >

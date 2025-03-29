@@ -13,4 +13,4 @@ export interface Note {
   categories?: Array<NoteCategory["id"]>
 }
 
-export type InsertableNote = Omit<Note, "id" | "createdAt" | "updatedAt">
+export type InsertableNote = Pick<Note, "title" | "content" | "categories">
