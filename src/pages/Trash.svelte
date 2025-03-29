@@ -6,6 +6,7 @@
   import { onMount } from "svelte"
   import Button from "@/lib/ui/Button.svelte"
   import type { Note } from "@/types"
+  import { flip } from "svelte/animate"
 
   onMount(() => noteService.getAllNotes())
 
@@ -24,7 +25,10 @@
 
     <ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {#each noteService.trashedNotes as note (note.id)}
-        <li class="p-8 rounded-lg dark:bg-slate-800">
+        <li
+          class="p-8 rounded-lg dark:bg-slate-800"
+          animate:flip={{ duration: 500 }}
+        >
           <h2 class="text-xl">{note.title}</h2>
 
           <article class="preview select-none">
