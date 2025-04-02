@@ -1,11 +1,15 @@
+import type { Note } from "@/types"
+
 export async function openDB(): Promise<IDBDatabase> {
   let db = $state<IDBDatabase>()
 
-  const openRequest = window.indexedDB.open("notia", 1)
+  const openRequest = window.indexedDB.open("notia", 2)
 
   return new Promise((resolve, reject) => {
-    openRequest.addEventListener("upgradeneeded", () => {
-      if (import.meta.env.DEV) console.log("no database yet...", openRequest)
+    openRequest.addEventListener("upgradeneeded", ({ oldVersion }) => {
+      if (oldVersion === 0) {
+        if (import.meta.env.DEV) console.log("no database yet...", openRequest)
+      }
 
       // create necessary object stores
       // to store notes and categories
@@ -26,8 +30,30 @@ export async function openDB(): Promise<IDBDatabase> {
       }
     })
 
-    openRequest.addEventListener("success", () => {
+    openRequest.addEventListener("success", (e) => {
       db = openRequest.result
+
+      if ((e.target as IDBOpenDBRequest).result.version < 2) {
+        // add trash field in v2
+        const notesTx = db.transaction("notes", "readwrite")
+        const notesCursor = notesTx.objectStore("notes").openCursor()
+
+        notesCursor.addEventListener("success", () => {
+          const cursor = notesCursor.result
+          if (!cursor) return
+
+          const note = cursor.value as Note
+          note["trashedAt"] = null
+
+          const req = cursor.update(note)
+          req.addEventListener("error", (e) =>
+            console.error("something went wrong", e)
+          )
+
+          cursor.continue()
+        })
+      }
+
       resolve(db)
       return console.log("connection established to database.")
     })

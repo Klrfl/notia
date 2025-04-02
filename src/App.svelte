@@ -2,6 +2,7 @@
   import { Router, Route } from "svelte-routing"
   import Home from "./pages/Home.svelte"
   import Navbar from "@/lib/Navbar.svelte"
+  import Trash from "./pages/Trash.svelte"
 
   const { url = "" } = $props()
 </script>
@@ -11,6 +12,10 @@
 
   <Route path="/">
     <Home />
+  </Route>
+
+  <Route path="/trash">
+    <Trash />
   </Route>
 </Router>
 

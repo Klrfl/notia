@@ -24,7 +24,7 @@
     "bg-white dark:bg-slate-800 border-b border-b-slate-200 dark:border-b-slate-700",
   ]}
 >
-  <h1 class="text-4xl">{title}</h1>
+  <h1 class="hidden sm:block text-4xl">{title}</h1>
 
   <div class="order-first">
     <input
