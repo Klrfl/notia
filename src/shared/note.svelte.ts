@@ -184,6 +184,12 @@ export class NoteService {
     })
   }
 
+  async recoverNotes(noteIds: Array<Note["id"]>) {
+    for (const noteId of noteIds) {
+      await this.recoverNote(noteId)
+    }
+  }
+
   hardDeleteNote(noteId: Note["id"]) {
     return new Promise((resolve) => {
       const notesStore = this.db?.transaction("notes", "readwrite")
