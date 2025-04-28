@@ -1,6 +1,7 @@
 {
   "short_name": "Notia",
   "name": "Notia: The barebones note-taking app",
+  "description": "Notia is a simple barebons note-taking web app made with Svelte for your local notetaking needs.",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -13,9 +14,13 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#df0000",
-  "background_color": "#dfdfdf",
+  "background_color": "#3e3e3e",
+  "theme_color": "#5B91F0",
   "display": "standalone",
-  "start_url": "/"
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "natural",
+  "dir": "ltr",
+  "lang": "en"
 }
 
