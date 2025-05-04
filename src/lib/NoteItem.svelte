@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Note } from "../types/"
-  import AlertDialog from "./ui/AlertDialog.svelte"
-  import Button from "./ui/Button.svelte"
+  import AlertDialog from "@/lib/ui/AlertDialog.svelte"
+  import Button from "@/lib/ui/Button.svelte"
   import Trash from "lucide-svelte/icons/trash"
   import DOMPurify from "dompurify"
 

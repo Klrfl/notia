@@ -2,6 +2,7 @@
   import DOMPurify from "dompurify"
   import HomeSidebar from "@/lib/HomeSidebar.svelte"
   import Button from "@/lib/ui/Button.svelte"
+  import AlertDialog from "@/lib/ui/AlertDialog.svelte"
   import { Checkbox } from "bits-ui"
 
   import { noteService } from "@/shared/note.svelte"
@@ -106,17 +107,27 @@
               {@html DOMPurify.sanitize(note.content)}
             </article>
 
-            <Button
-              variant="outline"
-              class="mt-8"
-              onclick={() => {
-                if (confirm("are you sure?")) {
-                  handleRecoverNote(note.id)
-                }
-              }}
+            <AlertDialog
+              title="Are you sure?"
+              description="Are you sure you would like to recover this note?"
             >
-              Recover note
-            </Button>
+              {#snippet trigger(props)}
+                <Button {...props} icon variant="outline" class="mt-8">
+                  <RotateCcw size="1rem" />
+                  Recover note
+                </Button>
+              {/snippet}
+
+              {#snippet action()}
+                <Button onclick={() => handleRecoverNote(note.id)}>
+                  Recover note
+                </Button>
+              {/snippet}
+
+              {#snippet cancel()}
+                No
+              {/snippet}
+            </AlertDialog>
           </label>
         </li>
       {/each}
