@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Note } from "../types/"
+  import { AlertDialog } from "bits-ui"
   import Button from "./ui/Button.svelte"
   import Trash from "lucide-svelte/icons/trash"
   import DOMPurify from "dompurify"
@@ -37,18 +38,58 @@
       }).format(new Date(note.createdAt))}
     </p>
 
-    <Button
-      icon
-      variant="danger"
-      onclick={(e) => {
-        e.stopPropagation()
-        deleteNote(note.id)
-      }}
-      size="sm"
-      class="col-span-full"
-    >
-      <Trash size="1rem" />
-      Delete note
-    </Button>
+    <AlertDialog.Root>
+      <AlertDialog.Trigger onclick={(e) => e.stopImmediatePropagation()}>
+        {#snippet child({ props })}
+          <Button {...props} icon variant="danger">
+            <Trash size="1rem" />
+            Delete note
+          </Button>
+        {/snippet}
+      </AlertDialog.Trigger>
+
+      <AlertDialog.Portal>
+        <AlertDialog.Overlay class="bg-black/80 absolute inset-0 z-10" />
+
+        <AlertDialog.Content
+          class={[
+            "fixed left-0 right-0 bottom-0 md:top-[50%] size-fit md:-translate-y-1/2 max-w-6xl mx-auto z-20",
+            "px-8 py-6 flex flex-col gap-4 outline outline-slate-200 dark:outline-slate-700 bg-white dark:bg-slate-800 rounded-lg",
+          ]}
+        >
+          <AlertDialog.Title>
+            {#snippet child({ props })}
+              <h2 {...props} class="text-xl font-bold">Delete note?</h2>
+            {/snippet}
+          </AlertDialog.Title>
+
+          <AlertDialog.Description>
+            {#snippet child({ props })}
+              <p {...props}>hey, you sure you want to delete this note?</p>
+            {/snippet}
+          </AlertDialog.Description>
+
+          <div class="flex gap-4 justify-center">
+            <AlertDialog.Action>
+              {#snippet child({ props })}
+                <Button
+                  {...props}
+                  variant="danger"
+                  onclick={() => deleteNote(note.id)}
+                >
+                  Yes
+                </Button>
+              {/snippet}
+            </AlertDialog.Action>
+
+            <AlertDialog.Cancel>
+              {#snippet child({ props })}
+                <Button {...props} variant="outline">No</Button>
+              {/snippet}
+            </AlertDialog.Cancel>
+          </div>
+        </AlertDialog.Content>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
   </div>
 </button>

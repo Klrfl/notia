@@ -42,10 +42,6 @@
   }
 
   const handleDeleteNote = async (noteId: Note["id"]) => {
-    if (!window.confirm("Are you sure you want to delete this note?")) {
-      return
-    }
-
     await noteService?.deleteNote(noteId)
   }
 
