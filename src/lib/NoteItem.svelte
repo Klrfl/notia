@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Note } from "../types/"
-  import { AlertDialog } from "bits-ui"
+  import AlertDialog from "./ui/AlertDialog.svelte"
   import Button from "./ui/Button.svelte"
   import Trash from "lucide-svelte/icons/trash"
   import DOMPurify from "dompurify"
@@ -37,6 +37,30 @@
         timeStyle: "medium",
       }).format(new Date(note.createdAt))}
     </p>
+
+    <AlertDialog
+      title="Note deletion"
+      description="Are you sure you want to delete this?"
+    >
+      {#snippet trigger(props)}
+        <Button {...props} icon variant="danger">
+          <Trash size="1em" />
+          Delete note
+        </Button>
+      {/snippet}
+
+      {#snippet action()}
+        <Button variant="danger" onclick={() => deleteNote(note.id)}>
+          Yes, delete this note
+        </Button>
+      {/snippet}
+
+      {#snippet cancel()}
+        No
+      {/snippet}
+    </AlertDialog>
+
+    <!--
 
     <AlertDialog.Root>
       <AlertDialog.Trigger onclick={(e) => e.stopImmediatePropagation()}>
@@ -91,5 +115,6 @@
         </AlertDialog.Content>
       </AlertDialog.Portal>
     </AlertDialog.Root>
+-->
   </div>
 </button>
