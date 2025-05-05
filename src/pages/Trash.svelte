@@ -3,12 +3,11 @@
   import HomeSidebar from "@/lib/HomeSidebar.svelte"
   import Button from "@/lib/ui/Button.svelte"
   import AlertDialog from "@/lib/ui/AlertDialog.svelte"
-  import { Checkbox } from "bits-ui"
+  import Checkbox from "@/lib/ui/Checkbox.svelte"
 
   import { noteService } from "@/shared/note.svelte"
   import type { Note } from "@/types"
 
-  import Check from "lucide-svelte/icons/check"
   import RotateCcw from "lucide-svelte/icons/rotate-ccw"
   import X from "lucide-svelte/icons/x"
 
@@ -78,28 +77,14 @@
           animate:flip={{ duration: 500 }}
         >
           <label for={String(note.id)} class="block p-8 cursor-pointer">
-            <Checkbox.Root
+            <Checkbox
               id={String(note.id)}
-              class={[
-                "absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2",
-                "outline outline-gray-200 dark:outline-slate-700",
-                "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer",
-                "aspect-square size-12 bg-white dark:bg-slate-800 p-4 rounded-lg",
-                "data-[state=checked]:dark:bg-blue-500 data-[state=checked]:bg-blue-500 data-[state=checked]:opacity-100",
-                "text-white",
-              ]}
               onCheckedChange={(checked) =>
                 checked
                   ? selectedNotes.push(note.id)
                   : selectedNotes.splice(selectedNotes.indexOf(note.id), 1)}
               checked={selectedNotes.includes(note.id)}
-            >
-              {#snippet children({ checked })}
-                {#if checked}
-                  <Check size="1.2rem" />
-                {/if}
-              {/snippet}
-            </Checkbox.Root>
+            />
 
             <h2 class="text-xl">{note.title}</h2>
 

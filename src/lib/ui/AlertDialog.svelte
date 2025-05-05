@@ -5,14 +5,15 @@
 
   interface Props extends AlertDialog.RootProps {
     title: string
-    titleLevel?: 1 | 2 | 3 | 4 | 5 | 6
+    titleLevel?: AlertDialog.TitleProps["level"]
     description: string
     trigger?: Snippet<[Record<string, unknown>]>
     action?: Snippet<[Record<string, unknown>]>
     cancel?: Snippet
   }
 
-  const {
+  let {
+    open = $bindable(false),
     cancel,
     action,
     children,
@@ -20,10 +21,11 @@
     title,
     titleLevel,
     description,
+    ...rest
   }: Props = $props()
 </script>
 
-<AlertDialog.Root>
+<AlertDialog.Root bind:open {...rest}>
   <AlertDialog.Trigger onclick={(e) => e.stopImmediatePropagation()}>
     {#snippet child({ props })}
       {#if trigger}
@@ -80,14 +82,14 @@
 
 <!--
 <AlertDialog title="Note deletion" titleLevel={2} description="Are you sure to delete this?">
-  {#snippet trigger()}
-    <Button variant="danger" onclick={apakek}>
+  {#snippet trigger(props)}
+    <Button {...props} variant="danger" onclick={apakek}>
       Click me
     </Button>
   {/snippet}
 
-  {#snippet action()}
-    <Button variant="danger" onclick={apakek}>
+  {#snippet action(props)}
+    <Button {...props} variant="danger" onclick={apakek}>
       Yes
     </Button>
   {/snippet}
