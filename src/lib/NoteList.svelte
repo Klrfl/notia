@@ -7,7 +7,7 @@
   import NoteItem from "./NoteItem.svelte"
   import NoteEdit from "./NoteEdit.svelte"
   import Checkbox from "@/lib/ui/Checkbox.svelte"
-  import { Popover } from "bits-ui"
+  import Popover from "@/lib/ui/Popover.svelte"
 
   import { noteService } from "@/shared/note.svelte"
   import { categoryService } from "@/shared/category.svelte"
@@ -76,67 +76,58 @@
           : ""}.
       </p>
 
-      <Popover.Root bind:open={isPopoverOpen}>
-        <Popover.Trigger>
-          {#snippet child({ props })}
+      <Popover bind:open={isPopoverOpen}>
+        {#snippet trigger(props)}
+          <Button
+            {...props}
+            class="flex hover:bg-gray-200/50"
+            variant="none"
+            size="sm"
+            onclick={() => (isPopoverOpen = true)}
+          >
+            <span class="sr-only">Actions</span>
+            <Ellipsis />
+          </Button>
+        {/snippet}
+
+        <Button
+          variant="primary"
+          onclick={() => {
+            isSelectingCategories = true
+            isPopoverOpen = false
+          }}
+        >
+          Add category
+        </Button>
+
+        <AlertDialog
+          title="Are you sure?"
+          description={`Are you sure you want to delete ${selectedNotes.length} note${selectedNotes.length > 1 ? "s" : ""}?`}
+        >
+          {#snippet trigger(props)}
+            <Button {...props} variant="danger">Delete</Button>
+          {/snippet}
+
+          {#snippet action(props)}
             <Button
               {...props}
-              class="flex hover:bg-gray-200/50"
-              variant="none"
-              size="sm"
-              onclick={() => (isPopoverOpen = true)}
-            >
-              <span class="sr-only">Actions</span>
-              <Ellipsis />
-            </Button>
-          {/snippet}
-        </Popover.Trigger>
-
-        <Popover.Portal>
-          <Popover.Content
-            class="flex flex-col gap-4 bg-white/80 dark:bg-slate-800/80 p-4 rounded-lg shadow-lg right-0"
-            sideOffset={8}
-          >
-            <Button
-              variant="primary"
+              variant="danger"
               onclick={() => {
-                isSelectingCategories = true
+                noteService.deleteNotes(selectedNotes)
+
+                selectedNotes = []
                 isPopoverOpen = false
               }}
             >
-              Add category
+              Yes, Delete
             </Button>
+          {/snippet}
 
-            <AlertDialog
-              title="Are you sure?"
-              description={`Are you sure you want to delete ${selectedNotes.length} note${selectedNotes.length > 1 ? "s" : ""}?`}
-            >
-              {#snippet trigger(props)}
-                <Button {...props} variant="danger">Delete</Button>
-              {/snippet}
-
-              {#snippet action(props)}
-                <Button
-                  {...props}
-                  variant="danger"
-                  onclick={() => {
-                    noteService.deleteNotes(selectedNotes)
-
-                    selectedNotes = []
-                    isPopoverOpen = false
-                  }}
-                >
-                  Yes, Delete
-                </Button>
-              {/snippet}
-
-              {#snippet cancel()}
-                No
-              {/snippet}
-            </AlertDialog>
-          </Popover.Content>
-        </Popover.Portal>
-      </Popover.Root>
+          {#snippet cancel()}
+            No
+          {/snippet}
+        </AlertDialog>
+      </Popover>
 
       <Dialog
         bind:isOpen={isSelectingCategories}
