@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Note, NoteCategory } from "@/types/"
-  import { fly } from "svelte/transition"
 
   import Button from "./ui/Button.svelte"
   import Dialog from "./ui/Dialog.svelte"
@@ -15,6 +14,7 @@
   import Ellipsis from "lucide-svelte/icons/ellipsis"
   import X from "lucide-svelte/icons/x"
   import { onMount } from "svelte"
+  import { fly } from "svelte/transition"
   import { flip } from "svelte/animate"
   import AlertDialog from "./ui/AlertDialog.svelte"
 

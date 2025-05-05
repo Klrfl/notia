@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Popover } from "bits-ui"
-  import { Snippet } from "svelte"
+  import type { Snippet } from "svelte"
 
   interface Props extends Popover.RootProps {
     open?: boolean

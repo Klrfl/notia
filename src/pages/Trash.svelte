@@ -13,7 +13,7 @@
 
   import { onMount } from "svelte"
   import { flip } from "svelte/animate"
-  import { fade } from "svelte/transition"
+  import { fly, fade } from "svelte/transition"
 
   onMount(() => noteService.getAllNotes())
 
@@ -74,6 +74,7 @@
       {#each noteService.trashedNotes as note (note.id)}
         <li
           class="rounded-lg bg-white outline outline-gray-200 dark:bg-slate-800 dark:outline-slate-700 has-[[data-state=checked]]:outline-blue-500 group relative"
+          transition:fly
           animate:flip={{ duration: 500 }}
         >
           <label for={String(note.id)} class="block p-8 cursor-pointer">
