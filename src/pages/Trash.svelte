@@ -24,16 +24,8 @@
   }
 
   function handleRecoverNotes() {
-    if (
-      !confirm(
-        `are you sure you want to recover ${selectedNotes.length} notes?`
-      )
-    ) {
-      return
-    }
-
-    selectedNotes = []
-    return noteService.recoverNotes(selectedNotes)
+    noteService.recoverNotes(selectedNotes)
+    return (selectedNotes = [])
   }
 </script>
 
@@ -63,10 +55,27 @@
 
         {selectedNotes.length} notes selected
 
-        <Button icon size="sm" onclick={() => handleRecoverNotes()}>
-          <RotateCcw />
-          Recover selected Notes
-        </Button>
+        <AlertDialog
+          title="Recover notes?"
+          description="Are you sure you want to recover these notes?"
+        >
+          {#snippet trigger(props)}
+            <Button {...props} icon>
+              <RotateCcw />
+              Recover selected notes
+            </Button>
+          {/snippet}
+
+          {#snippet action(props)}
+            <Button {...props} icon onclick={handleRecoverNotes}>
+              Yes, recover selected notes
+            </Button>
+          {/snippet}
+
+          {#snippet cancel()}
+            No
+          {/snippet}
+        </AlertDialog>
       </header>
     {/if}
 
