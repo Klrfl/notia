@@ -1,21 +1,22 @@
 <script lang="ts">
   import type { Note, NoteCategory } from "@/types/"
-  import { fly } from "svelte/transition"
 
   import Button from "./ui/Button.svelte"
   import Dialog from "./ui/Dialog.svelte"
   import NoteItem from "./NoteItem.svelte"
   import NoteEdit from "./NoteEdit.svelte"
-  import { Checkbox, Popover } from "bits-ui"
+  import Checkbox from "@/lib/ui/Checkbox.svelte"
+  import Popover from "@/lib/ui/Popover.svelte"
 
   import { noteService } from "@/shared/note.svelte"
   import { categoryService } from "@/shared/category.svelte"
 
   import Ellipsis from "lucide-svelte/icons/ellipsis"
   import X from "lucide-svelte/icons/x"
-  import Check from "lucide-svelte/icons/check"
   import { onMount } from "svelte"
+  import { fly } from "svelte/transition"
   import { flip } from "svelte/animate"
+  import AlertDialog from "./ui/AlertDialog.svelte"
 
   onMount(() => {
     noteService.getAllNotes()
@@ -42,10 +43,6 @@
   }
 
   const handleDeleteNote = async (noteId: Note["id"]) => {
-    if (!window.confirm("Are you sure you want to delete this note?")) {
-      return
-    }
-
     await noteService?.deleteNote(noteId)
   }
 
@@ -79,54 +76,58 @@
           : ""}.
       </p>
 
-      <Popover.Root bind:open={isPopoverOpen}>
-        <Popover.Trigger>
-          {#snippet child({ props })}
+      <Popover bind:open={isPopoverOpen}>
+        {#snippet trigger(props)}
+          <Button
+            {...props}
+            class="flex hover:bg-gray-200/50"
+            variant="none"
+            size="sm"
+            onclick={() => (isPopoverOpen = true)}
+          >
+            <span class="sr-only">Actions</span>
+            <Ellipsis />
+          </Button>
+        {/snippet}
+
+        <Button
+          variant="primary"
+          onclick={() => {
+            isSelectingCategories = true
+            isPopoverOpen = false
+          }}
+        >
+          Add category
+        </Button>
+
+        <AlertDialog
+          title="Are you sure?"
+          description={`Are you sure you want to delete ${selectedNotes.length} note${selectedNotes.length > 1 ? "s" : ""}?`}
+        >
+          {#snippet trigger(props)}
+            <Button {...props} variant="danger">Delete</Button>
+          {/snippet}
+
+          {#snippet action(props)}
             <Button
               {...props}
-              class="flex hover:bg-gray-200/50"
-              variant="none"
-              size="sm"
-              onclick={() => (isPopoverOpen = true)}
-            >
-              <span class="sr-only">Actions</span>
-              <Ellipsis />
-            </Button>
-          {/snippet}
-        </Popover.Trigger>
-
-        <Popover.Portal>
-          <Popover.Content
-            class="flex flex-col gap-4 bg-white/80 dark:bg-slate-800/80 p-4 rounded-lg shadow-lg right-0"
-            sideOffset={8}
-          >
-            <Button
-              variant="primary"
-              size="sm"
-              onclick={() => {
-                isSelectingCategories = true
-                selectedNotes = []
-                isPopoverOpen = false
-              }}
-            >
-              Add category
-            </Button>
-            <Button
               variant="danger"
-              size="sm"
               onclick={() => {
-                if (!confirm("are you sure?")) return
                 noteService.deleteNotes(selectedNotes)
 
                 selectedNotes = []
                 isPopoverOpen = false
               }}
             >
-              Delete
+              Yes, Delete
             </Button>
-          </Popover.Content>
-        </Popover.Portal>
-      </Popover.Root>
+          {/snippet}
+
+          {#snippet cancel()}
+            No
+          {/snippet}
+        </AlertDialog>
+      </Popover>
 
       <Dialog
         bind:isOpen={isSelectingCategories}
@@ -178,28 +179,14 @@
           transition:fly
           animate:flip={{ duration: 500 }}
         >
-          <Checkbox.Root
+          <Checkbox
             id={String(note.id)}
-            class={[
-              "absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2",
-              "outline outline-gray-200 dark:outline-slate-700",
-              "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer",
-              "aspect-square size-12 bg-white dark:bg-slate-800 p-4 rounded-lg",
-              "data-[state=checked]:dark:bg-blue-500 data-[state=checked]:bg-blue-500 data-[state=checked]:opacity-100",
-              "text-white",
-            ]}
             onCheckedChange={(checked) =>
               checked
                 ? selectedNotes.push(note.id)
                 : selectedNotes.splice(selectedNotes.indexOf(note.id), 1)}
             checked={selectedNotes.includes(note.id)}
-          >
-            {#snippet children({ checked })}
-              {#if checked}
-                <Check size="1.2rem" />
-              {/if}
-            {/snippet}
-          </Checkbox.Root>
+          />
 
           <NoteItem
             {note}

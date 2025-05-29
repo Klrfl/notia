@@ -2,18 +2,18 @@
   import DOMPurify from "dompurify"
   import HomeSidebar from "@/lib/HomeSidebar.svelte"
   import Button from "@/lib/ui/Button.svelte"
-  import { Checkbox } from "bits-ui"
+  import AlertDialog from "@/lib/ui/AlertDialog.svelte"
+  import Checkbox from "@/lib/ui/Checkbox.svelte"
 
   import { noteService } from "@/shared/note.svelte"
   import type { Note } from "@/types"
 
-  import Check from "lucide-svelte/icons/check"
   import RotateCcw from "lucide-svelte/icons/rotate-ccw"
   import X from "lucide-svelte/icons/x"
 
   import { onMount } from "svelte"
   import { flip } from "svelte/animate"
-  import { fade } from "svelte/transition"
+  import { fly, fade } from "svelte/transition"
 
   onMount(() => noteService.getAllNotes())
 
@@ -24,16 +24,8 @@
   }
 
   function handleRecoverNotes() {
-    if (
-      !confirm(
-        `are you sure you want to recover ${selectedNotes.length} notes?`
-      )
-    ) {
-      return
-    }
-
-    selectedNotes = []
-    return noteService.recoverNotes(selectedNotes)
+    noteService.recoverNotes(selectedNotes)
+    return (selectedNotes = [])
   }
 </script>
 
@@ -63,10 +55,27 @@
 
         {selectedNotes.length} notes selected
 
-        <Button icon size="sm" onclick={() => handleRecoverNotes()}>
-          <RotateCcw />
-          Recover selected Notes
-        </Button>
+        <AlertDialog
+          title="Recover notes?"
+          description="Are you sure you want to recover these notes?"
+        >
+          {#snippet trigger(props)}
+            <Button {...props} icon>
+              <RotateCcw />
+              Recover selected notes
+            </Button>
+          {/snippet}
+
+          {#snippet action(props)}
+            <Button {...props} icon onclick={handleRecoverNotes}>
+              Yes, recover selected notes
+            </Button>
+          {/snippet}
+
+          {#snippet cancel()}
+            No
+          {/snippet}
+        </AlertDialog>
       </header>
     {/if}
 
@@ -74,31 +83,18 @@
       {#each noteService.trashedNotes as note (note.id)}
         <li
           class="rounded-lg bg-white outline outline-gray-200 dark:bg-slate-800 dark:outline-slate-700 has-[[data-state=checked]]:outline-blue-500 group relative"
+          transition:fly
           animate:flip={{ duration: 500 }}
         >
           <label for={String(note.id)} class="block p-8 cursor-pointer">
-            <Checkbox.Root
+            <Checkbox
               id={String(note.id)}
-              class={[
-                "absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2",
-                "outline outline-gray-200 dark:outline-slate-700",
-                "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer",
-                "aspect-square size-12 bg-white dark:bg-slate-800 p-4 rounded-lg",
-                "data-[state=checked]:dark:bg-blue-500 data-[state=checked]:bg-blue-500 data-[state=checked]:opacity-100",
-                "text-white",
-              ]}
               onCheckedChange={(checked) =>
                 checked
                   ? selectedNotes.push(note.id)
                   : selectedNotes.splice(selectedNotes.indexOf(note.id), 1)}
               checked={selectedNotes.includes(note.id)}
-            >
-              {#snippet children({ checked })}
-                {#if checked}
-                  <Check size="1.2rem" />
-                {/if}
-              {/snippet}
-            </Checkbox.Root>
+            />
 
             <h2 class="text-xl">{note.title}</h2>
 
@@ -106,17 +102,27 @@
               {@html DOMPurify.sanitize(note.content)}
             </article>
 
-            <Button
-              variant="outline"
-              class="mt-8"
-              onclick={() => {
-                if (confirm("are you sure?")) {
-                  handleRecoverNote(note.id)
-                }
-              }}
+            <AlertDialog
+              title="Are you sure?"
+              description="Are you sure you would like to recover this note?"
             >
-              Recover note
-            </Button>
+              {#snippet trigger(props)}
+                <Button {...props} icon variant="outline" class="mt-8">
+                  <RotateCcw size="1rem" />
+                  Recover note
+                </Button>
+              {/snippet}
+
+              {#snippet action()}
+                <Button onclick={() => handleRecoverNote(note.id)}>
+                  Recover note
+                </Button>
+              {/snippet}
+
+              {#snippet cancel()}
+                No
+              {/snippet}
+            </AlertDialog>
           </label>
         </li>
       {/each}
