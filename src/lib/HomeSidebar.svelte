@@ -73,6 +73,19 @@
   }
 </script>
 
+<div
+  class="fixed right-0 bottom-0 -translate-x-[20px] -translate-y-1/2 z-10 md:hidden md:invisible hover:scale-[1.1] transition-transform"
+>
+  <Button
+    icon
+    onclick={() => (isAddingNote = true)}
+    title="add note"
+    class="aspect-square rounded-full"
+  >
+    <Plus />
+  </Button>
+</div>
+
 <menu
   class={[
     "sidebar absolute shadow-lg md:shadow-none md:relative flex flex-col gap-4 content-start px-8 py-4",
@@ -201,14 +214,14 @@
   :global(body:has(#sidebar-toggle:checked) .sidebar) {
     translate: 0;
 
-    @media screen and (min-width: 768px) {
+    @media screen and (min-width: 48rem) {
       translate: 0;
     }
   }
 
   /* disable scroll when menu is open */
   :global(body:has(#sidebar-toggle:checked)) {
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 48rem) {
       max-height: 100vh;
       overflow: hidden;
     }
