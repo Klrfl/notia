@@ -80,7 +80,7 @@
     icon
     onclick={() => (isAddingNote = true)}
     title="add note"
-    class="aspect-square rounded-full"
+    class="aspect-square rounded-full dark:hover:bg-blue-700"
   >
     <Plus />
   </Button>
