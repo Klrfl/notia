@@ -28,19 +28,16 @@
 <AlertDialog.Root bind:open {...rest}>
   <AlertDialog.Trigger onclick={(e) => e.stopImmediatePropagation()}>
     {#snippet child({ props })}
-      {#if trigger}
-        {@render trigger(props)}
-      {:else}
-        <Button {...props} variant="primary">Confirm</Button>
-      {/if}
+      {@render trigger?.(props)}
     {/snippet}
   </AlertDialog.Trigger>
 
   <AlertDialog.Portal>
-    <AlertDialog.Overlay class="bg-black/80 absolute inset-0 z-10" />
+    <AlertDialog.Overlay class="bg-black/80 absolute inset-0 z-10 " />
 
     <AlertDialog.Content
       class={[
+        "transition-[transform,opacity] data-[state=closed]:animate-out",
         "fixed left-0 right-0 bottom-0 md:top-[50%] size-fit md:-translate-y-1/2 max-w-6xl mx-auto z-20",
         "px-8 py-6 flex flex-col gap-4 outline outline-slate-200 dark:outline-slate-700 bg-white dark:bg-slate-800 rounded-lg",
       ]}

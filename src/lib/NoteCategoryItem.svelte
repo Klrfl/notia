@@ -31,35 +31,35 @@
   let newCategory = $state(category.name)
   let isCategoryInFilter = $state(false)
   let isEditing = $state(false)
+
+  function handleClick() {
+    if (showEditButton) {
+      return (isEditing = true)
+    }
+
+    isCategoryInFilter = !isCategoryInFilter
+    return toggleCategoryFilter(category.id)
+  }
 </script>
 
 <li
-  class="hover:bg-gray-200/70 dark:hover:bg-slate-900/50 flex justify-between group md:max-w-[25ch] text-left relative"
+  class="hover:bg-gray-200/70 dark:hover:bg-slate-900/50 group md:max-w-[25ch] relative"
 >
   <Button
     variant="none"
     icon
-    onclick={() => {
-      if (showEditButton) {
-        return (isEditing = true)
-      }
-
-      isCategoryInFilter = !isCategoryInFilter
-      return toggleCategoryFilter(category.id)
-    }}
+    onclick={handleClick}
     class={[
-      "w-full flex gap-2 justify-start",
-      isCategoryInFilter ? "bg-blue-500 text-white" : "text-gray-700",
+      "w-full justify-start",
+      isCategoryInFilter ? "border-r-2 border-r-blue-500 text-white" : "",
     ]}
     size="sm"
   >
-    <div>
-      {#if showEditButton}
-        <Pencil />
-      {:else}
-        <Tag />
-      {/if}
-    </div>
+    {#if showEditButton}
+      <Pencil />
+    {:else}
+      <Tag />
+    {/if}
 
     <span class="whitespace-nowrap overflow-hidden overflow-ellipsis">
       {category.name}
@@ -84,7 +84,7 @@
 
       <Button icon>
         <Plus />
-        Add new button
+        Edit category
       </Button>
     </form>
   </Dialog>
@@ -95,7 +95,7 @@
       size="sm"
       variant="outline"
       onclick={() => categoryDeleted(category.id)}
-      class="absolute right-0 opacity-0 focus-visible:opacity-100 group-hover:opacity-100 transition-opacity bg-gray-200 dark:bg-slate-800"
+      class="absolute right-0 top-0 opacity-0 focus-visible:opacity-100 group-hover:opacity-100 transition-opacity bg-gray-200 dark:bg-slate-800"
     >
       <Trash />
     </Button>
