@@ -73,18 +73,14 @@
   }
 </script>
 
-<div
-  class="fixed right-0 bottom-0 -translate-x-[20px] -translate-y-1/2 z-10 md:hidden md:invisible hover:scale-[1.1] transition-transform"
+<Button
+  icon
+  onclick={() => (isAddingNote = true)}
+  title="add note"
+  class="md:hidden md:invisible aspect-square rounded-full dark:hover:bg-blue-700 hover:scale-[1.1] transition-[scale] fixed bottom-8 right-8 z-10 shadow-lg"
 >
-  <Button
-    icon
-    onclick={() => (isAddingNote = true)}
-    title="add note"
-    class="aspect-square rounded-full dark:hover:bg-blue-700"
-  >
-    <Plus />
-  </Button>
-</div>
+  <Plus />
+</Button>
 
 <menu
   class={[
@@ -174,7 +170,7 @@
     {/if}
   </Button>
 
-  <Dialog bind:isOpen={isAddingCategory} heading="Add new category">
+  <Dialog bind:isOpen={isAddingCategory} heading="Add new category" size="sm">
     <form
       onsubmit={(e) => {
         e.preventDefault()
@@ -193,7 +189,11 @@
         placeholder="Category name"
         required
       />
-      <Button type="submit">Submit</Button>
+
+      <Button type="submit" icon>
+        <Plus />
+        Add new category
+      </Button>
     </form>
   </Dialog>
 </menu>

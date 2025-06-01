@@ -5,6 +5,7 @@
 
   interface Props extends Dialog.RootProps {
     isOpen?: boolean
+    size?: "sm" | "md" | "lg" | "full"
     heading: string
     description?: string
     trigger?: Snippet
@@ -13,6 +14,7 @@
 
   let {
     isOpen = $bindable(),
+    size = "md",
     heading,
     children,
     description = "",
@@ -48,8 +50,12 @@
     <Dialog.Content
       class={[
         "origin-center transition-[opacity,transform] data-[state=closed]:animate-out",
-        "fixed left-0 right-0 bottom-0 md:top-0 max-w-6xl m-auto z-20",
+        "fixed left-0 right-0 bottom-0 md:top-0 m-auto z-20",
         "bg-white dark:bg-slate-800 outline outline-slate-200 dark:outline-slate-700 rounded-lg shadow-lg overflow-auto h-max",
+        size === "sm" && "max-w-2xl",
+        size === "md" && "max-w-6xl",
+        size === "lg" && "max-w-7xl",
+        size === "full" && "max-w-full",
       ]}
     >
       <!-- wrapper for content, don't delete -->
