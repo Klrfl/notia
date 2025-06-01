@@ -19,8 +19,12 @@
 
   let selectedNotes: Array<Note["id"]> = $state([])
 
-  function handleRecoverNote(noteId: Note["id"]) {
-    noteService.recoverNote(noteId)
+  function selectNote(id: Note["id"]) {
+    selectedNotes.push(id)
+  }
+
+  function unselectNote(id: Note["id"]) {
+    return selectedNotes.splice(selectedNotes.indexOf(id), 1)
   }
 
   function handleRecoverNotes() {
@@ -68,6 +72,7 @@
 
           {#snippet action(props)}
             <Button {...props} icon onclick={handleRecoverNotes}>
+              <RotateCcw />
               Yes, recover selected notes
             </Button>
           {/snippet}
@@ -90,9 +95,7 @@
             <Checkbox
               id={String(note.id)}
               onCheckedChange={(checked) =>
-                checked
-                  ? selectedNotes.push(note.id)
-                  : selectedNotes.splice(selectedNotes.indexOf(note.id), 1)}
+                checked ? selectNote(note.id) : unselectNote(note.id)}
               checked={selectedNotes.includes(note.id)}
             />
 
@@ -101,28 +104,6 @@
             <article class="preview select-none">
               {@html DOMPurify.sanitize(note.content)}
             </article>
-
-            <AlertDialog
-              title="Are you sure?"
-              description="Are you sure you would like to recover this note?"
-            >
-              {#snippet trigger(props)}
-                <Button {...props} icon variant="outline" class="mt-8">
-                  <RotateCcw size="1rem" />
-                  Recover note
-                </Button>
-              {/snippet}
-
-              {#snippet action()}
-                <Button onclick={() => handleRecoverNote(note.id)}>
-                  Recover note
-                </Button>
-              {/snippet}
-
-              {#snippet cancel()}
-                No
-              {/snippet}
-            </AlertDialog>
           </label>
         </li>
       {/each}

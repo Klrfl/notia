@@ -203,7 +203,7 @@
     grid-column: sidebar;
     z-index: 10;
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 48rem) {
       translate: -100% 0;
       transition: translate 200ms ease;
       left: 0;
