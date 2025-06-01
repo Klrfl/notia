@@ -6,9 +6,22 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-body {
-  @apply font-sans bg-gray-100 dark:bg-slate-900 dark:text-gray-300 relative;
-  height: 100dvh;
+@layer base {
+  body {
+    @apply font-sans bg-gray-100 dark:bg-slate-900 dark:text-gray-300 relative;
+    height: 100dvh;
+  }
+}
+
+@keyframes exit {
+  to {
+    scale: 0.95;
+    opacity: 0;
+  }
+}
+
+@utility animate-out {
+  animation: exit 200ms;
 }
 
 .preview :is(h1, h2, h3, h4, h5, h6) {

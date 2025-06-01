@@ -47,8 +47,8 @@
     />
     <Dialog.Content
       class={[
-        "dialog-content",
-        "fixed left-0 right-0 bottom-0 md:top-[50%] md:-translate-y-1/2 max-w-6xl mx-auto z-20",
+        "origin-center transition-[opacity,transform] data-[state=closed]:animate-out",
+        "fixed left-0 right-0 bottom-0 md:top-0 max-w-6xl m-auto z-20",
         "bg-white dark:bg-slate-800 outline outline-slate-200 dark:outline-slate-700 rounded-lg shadow-lg overflow-auto h-max",
       ]}
     >
@@ -90,18 +90,3 @@
     {@render child()}
   </Dialog.Root>
 {/if}
-
-<style>
-  :global(.dialog-content) {
-    transition: transform 200ms ease;
-  }
-
-  :global(.dialog-content[data-state="open"]) {
-    transform: translateY(0);
-  }
-
-  :global(.dialog-content[data-state="closed"]) {
-    transform: translateY(50vh);
-    background: red;
-  }
-</style>
