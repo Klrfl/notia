@@ -10,6 +10,7 @@
 
   import RotateCcw from "lucide-svelte/icons/rotate-ccw"
   import X from "lucide-svelte/icons/x"
+  import Trash from "lucide-svelte/icons/trash"
 
   import { onMount } from "svelte"
   import { flip } from "svelte/animate"
@@ -29,6 +30,11 @@
 
   function handleRecoverNotes() {
     noteService.recoverNotes(selectedNotes)
+    return (selectedNotes = [])
+  }
+
+  function handleDeleteNotes() {
+    noteService.hardDeleteNotes(selectedNotes)
     return (selectedNotes = [])
   }
 </script>
@@ -58,6 +64,34 @@
         </Button>
 
         {selectedNotes.length} notes selected
+
+        <AlertDialog
+          title="Delete notes?"
+          description="Are you sure you want to delete these notes? These notes will be deleted forever, and can't be recovered."
+        >
+          {#snippet trigger(props)}
+            <Button {...props} icon variant="none">
+              <Trash />
+              Delete notes
+            </Button>
+          {/snippet}
+
+          {#snippet action(props)}
+            <Button
+              {...props}
+              icon
+              variant="danger"
+              onclick={handleDeleteNotes}
+            >
+              <Trash />
+              Yes, delete notes
+            </Button>
+          {/snippet}
+
+          {#snippet cancel()}
+            No
+          {/snippet}
+        </AlertDialog>
 
         <AlertDialog
           title="Recover notes?"

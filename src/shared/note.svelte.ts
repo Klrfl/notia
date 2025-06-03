@@ -132,7 +132,7 @@ export class NoteService {
       const notesObjectStore = notesStore?.objectStore("notes")
       const req = notesObjectStore.get(noteId)
 
-      let note: Note | undefined
+      let note: Note
 
       req.addEventListener("success", () => {
         note = req.result as Note
@@ -155,6 +155,14 @@ export class NoteService {
         })
       )
     })
+  }
+
+  async deleteNotes(noteIds: Note["id"][]) {
+    for (const id of noteIds) {
+      await this.deleteNote(id)
+    }
+
+    this.notes = this.notes.filter((note) => !noteIds.includes(note.id))
   }
 
   recoverNote(noteId: Note["id"]) {
@@ -201,6 +209,12 @@ export class NoteService {
     })
   }
 
+  async hardDeleteNotes(noteIds: Note["id"][]) {
+    for (const id of noteIds) {
+      await this.hardDeleteNote(id)
+    }
+  }
+
   categorizeNotes(
     selectedNotes: Array<Note["id"]>,
     newCategory: Array<NoteCategory["id"]>
@@ -239,14 +253,6 @@ export class NoteService {
         cursor.continue()
       })
     })
-  }
-
-  async deleteNotes(noteIds: Note["id"][]) {
-    for (const id of noteIds) {
-      await this.deleteNote(id)
-    }
-
-    this.notes = this.notes.filter((note) => !noteIds.includes(note.id))
   }
 }
 
